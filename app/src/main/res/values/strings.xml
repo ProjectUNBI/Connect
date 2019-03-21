@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Connect</string>
+    <string name="copy_to_this">Copy text</string>
+    <string name="trigger">Trig:</string>
+    <string name="text_null">null</string>
+    <string name="find_phone">Find phone</string>
+    <string name="send_clipboard">Send clipboard text</string>
+    <string name="get_triger">Listen</string>
+    <string name="clear">Clear</string>
+    <string name="description">Please send the trigger messaage from the other device or edit the value. It will be trigger when the message is received again in the device.</string>
+    <string name="tag">TAG:</string>
+    <string name="text_put_title">Title</string>
+    <string name="smashicons">Icons made by\n\"Smashicons\"\nhttps://www.flaticon.com/authors/smashicons\nCreative Commons BY 3.0\nhttp://creativecommons.org/licenses/by/3.0/</string>
+    <string name="yannick">Icons made by\n\"Yannick\"\nhttps://www.flaticon.com/authors/yannick\nCreative Commons BY 3.0\nhttp://creativecommons.org/licenses/by/3.0/</string>
+    <string name="cresnar">Icons made by\n\"Gregor Cresnar\"\nhttps://www.flaticon.com/authors/gregor-cresnar\nCreative Commons BY 3.0\nhttp://creativecommons.org/licenses/by/3.0/</string>
+    <string name="freepik">Icons made by\n\"Freepik\"\https://www.freepik.com/\nCreative Commons BY 3.0\nhttp://creativecommons.org/licenses/by/3.0/</string>
+    <string name="icongeek26">Icons made by\n\"Icongeek26\"\nhttps://www.flaticon.com/authors/icongeek26\nCreative Commons BY 3.0\nhttp://creativecommons.org/licenses/by/3.0/</string>
+    <string name="credit">Credit:</string>
+    <string name="password">Password</string>
+    <string name="text_ip">IP:</string>
+    <string name="text_port">Port:</string>
+    <string name="text_port_value">Put port</string>
+    <string name="text_ip_adres">Your IP address</string>
+    <string name="enable_custom">Enable custom activity</string>
+    <string name="save">Save</string>
+    <string name="log">Log</string>
+    <string name="customactivity">Custom activities</string>
+    <string name="logger">Log view</string>
+    <string name="about">About</string>
 </resources>
