@@ -14,8 +14,8 @@ class MyBroadCastReciever:BroadcastReceiver(){
         when(actionId){
             BOOTCOMPLETE->pusintent= Intent(context,TCPservice::class.java)
         }
-        if(pusintent!=null){
-            context?.startService(pusintent)//starting the service when boot start
+        if(pusintent!=null&&context!= null){
+            context.startService(pusintent)//starting the service when boot start
         }
     }
 }

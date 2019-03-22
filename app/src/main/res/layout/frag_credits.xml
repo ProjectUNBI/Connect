@@ -8,20 +8,20 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent"
-        android:layout_margin="20dp">
+        android:layout_margin="20sp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="35dp"
+            android:textSize="35sp"
             android:text="@string/credit"
             android:textColor="@color/black"
             android:textStyle="bold"/>
         <android.support.v7.widget.CardView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
@@ -30,11 +30,11 @@
                 />
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
@@ -44,11 +44,11 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
@@ -57,11 +57,11 @@
                 />
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
@@ -70,11 +70,11 @@
                 />
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"

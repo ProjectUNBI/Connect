@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="big_bold">15sp</dimen>
+    <dimen name="big_norbig_normal">8sp</dimen>
+    <dimen name="margin_end">10sp</dimen>
+    <dimen name="smalest_margin_from_wall">10sp</dimen>
+    <dimen name="small_bold">10sp</dimen>
+    <dimen name="medium_bold">10sp</dimen>
+</resources>

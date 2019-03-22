@@ -10,16 +10,22 @@ import android.os.Build
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import com.unbi.connect.NOTIFICATION_CHANNEL_ID
 import com.unbi.connect.fragment.BaseFragMent
 import kotlin.reflect.KClass
 
 
-class OngoingNotificationBuilder{
+class OngoingNotificationBuilder {
 
-    private val NOTIFICATION_CHANNEL_ID: String="com.unbi.connect"
 
-     inline fun <reified T: Service>buildOngoingNotification(context:Context, kClass: KClass<T>, iconId:Int,title:String,body:String): Notification? {
-        val notificationIntent = Intent(context,kClass::class.java)
+    inline fun <reified T : Service> buildOngoingNotification(
+        context: Context,
+        kClass: KClass<T>,
+        iconId: Int,
+        title: String,
+        body: String
+    ): Notification? {
+        val notificationIntent = Intent(context, kClass::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -32,25 +38,24 @@ class OngoingNotificationBuilder{
 
             val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             val notification = notificationBuilder.setOngoing(true)
-                    .setSmallIcon(iconId)
-                    .setContentTitle("TCP server")
-                    .setContentText("Running.....")
-                    .setPriority(NotificationManager.IMPORTANCE_MIN)
-                    .setCategory(Notification.CATEGORY_SERVICE)
-                    .build()
+                .setSmallIcon(iconId)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build()
             return notification
         } else {
             val notification = Notification.Builder(context)
-                    .setContentTitle("TCP server")
-                    .setContentText("Running....")
-                    .setSmallIcon(iconId)
-                    .setContentIntent(pendingIntent)
-                    .build()
+                .setContentTitle(title)
+                .setContentText(body)
+                .setSmallIcon(iconId)
+                .setContentIntent(pendingIntent)
+                .build()
 
             return notification
         }
     }
-
 
 
 }
