@@ -1,7 +1,9 @@
 package com.unbi.connect
 
+import com.unbi.connect.messaging.MyMessage
+
 interface Listener{
-    fun ActionComplete(message:MyMessage)
+    fun ActionComplete(message: MyMessage)
 }
 
 interface Logger{

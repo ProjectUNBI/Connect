@@ -1,6 +1,7 @@
-package com.unbi.connect
+package com.unbi.connect.messaging
 
 import com.google.gson.Gson
+import com.unbi.connect.*
 import com.unbi.connect.async.ClientAsync
 import com.unbi.connect.util_classes.AES_Util
 import java.util.*
@@ -11,20 +12,21 @@ class MyMessage(
     val saltToAdd: Salt/*This salt is to be add in nxt message if send*/,
     val saltToCheck: Salt?/*This salt is to Check from the previously stored data*/,
     val sender: IpPort,
-    val tag: String,
-    val message: String,
-    val extra: Extra,
+    val tag: String?,
+    val message: String?,
+    val extra: Extra?,
     val isIntent: Boolean,
     val type: Int,
-    val uuidToadd: MsgUUID,
+    val uuidToadd: MsgUUID?,
     val uuidToCheck: MsgUUID,
+    val taskName: String?=null,
     val resultCode: Int = RESULT_UNKNOWN
 ) {
     fun getEncryptedMsg(): String? {
         return AES_Util().encrypt(Gson().toJson(this))
     }
 
-    fun send(toaster: Toaster, logger: Logger) {//maybe a time consuming tasek
+    fun send(toaster: Toaster?, logger: Logger) {//maybe a time consuming tasek
         val async=ClientAsync(toaster,logger)
         async.execute(this)
     }
@@ -105,17 +107,7 @@ class DataList {
         var existed = false
         //i dont know if i should add the following code
         val i = arrayOftbObject.iterator()
-//        if (timeBaseObject is MsgUUID) {
-//            while (i.hasNext()) {
-//                val dataobject = i.next() // must be called before you can call i.remove()
-//                // Do something
-//
-//                if (timeBaseObject.uuid.equals((dataobject as MsgUUID).uuid)) {
-//                    existed= true
-//                }
-//            }//end of while
-//
-//        }
+
         if (timeBaseObject is Salt) {
             while (i.hasNext()) {
                 val dataobject = i.next() // must be called before you can call i.remove()
@@ -152,18 +144,7 @@ class DataList {
         }
         var isvalid = false;
         val i = arrayOftbObject.iterator()
-//        if (timeBaseObject is MsgUUID) {
-//            while (i.hasNext()) {
-//                val dataobject = i.next() // must be called before you can call i.remove()
-//                // Do something
-//
-//                if (timeBaseObject.uuid.equals((dataobject as MsgUUID).uuid)) {
-//                    isvalid = true
-//                    i.remove()
-//                }
-//            }//end of while
-//
-//        }
+
         if (timeBaseObject is Salt) {
             while (i.hasNext()) {
                 val dataobject = i.next() // must be called before you can call i.remove()
@@ -196,11 +177,12 @@ class DataList {
 
 class Salt(var saltString: String = "", milli: Long) : TimeBaseObject(milli) {
 
-    fun generate(data: DataList) {
+    fun generate(data: DataList): Salt {
         if (saltString.equals("")) {
             saltString = SALT_PREFIX + UUID.randomUUID().toString()
         }
         data.add(this)
+        return this
     }
 
 }

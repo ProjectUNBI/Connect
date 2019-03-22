@@ -1,17 +1,12 @@
 package com.unbi.connect
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.R.id.edit
-import android.content.SharedPreferences
-import android.service.autofill.UserData
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import com.unbi.connect.messaging.DataList
+import com.unbi.connect.messaging.IpPort
 import java.net.NetworkInterface
 import java.security.MessageDigest
 import java.util.*
-import java.net.NetworkInterface.getNetworkInterfaces
 import java.net.SocketException
 
 
@@ -51,7 +46,7 @@ class Userdata private constructor() {
         when (id) {
 
             R.id.edit_port_value -> {
-                ipport = IpPort(getDeviceIpAddress(),value as Int)
+                ipport = IpPort(getDeviceIpAddress(), value as Int)
             }
             R.id.edit_password -> global_password = value as String
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
@@ -77,7 +72,7 @@ class Userdata private constructor() {
         }
         //copying variable valuer
         isToast=userdata.isToast
-        ipport = IpPort(getDeviceIpAddress(),userdata.ipport.port)
+        ipport = IpPort(getDeviceIpAddress(), userdata.ipport.port)
         global_password = userdata.global_password
         byte_globalpassword = userdata.byte_globalpassword
         iscustomactivity = userdata.iscustomactivity
@@ -96,6 +91,7 @@ class ApplicationInstance private constructor() {
 
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
+    val PendingResultArray=DataList()
 
 }
 

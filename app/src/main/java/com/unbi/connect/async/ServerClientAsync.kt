@@ -2,20 +2,17 @@ package com.unbi.connect.async
 
 import android.os.AsyncTask
 import android.util.Log
-import com.google.gson.Gson
 import com.unbi.connect.*
-import com.unbi.connect.service.TCPservice
+import com.unbi.connect.messaging.*
 import java.net.Socket
-import com.unbi.connect.util_classes.AES_Util
 import java.io.*
 import java.net.InetAddress
 
-class ServerAsync(val listener: Listener, val logger: Logger) : AsyncTask<Socket, Void, MyMessage>() {
+class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket, Void, MyMessage>() {
     private val LOGTAG: String = "ServerClientAsync"
     override fun doInBackground(vararg params: Socket?): MyMessage? {
         val socket = params[0]
-        var msg: MyMessage? = null
-        var decrypt: String? = null
+        var issocketclosed=false
         if (socket == null) {
             return null
         }
@@ -33,52 +30,31 @@ class ServerAsync(val listener: Listener, val logger: Logger) : AsyncTask<Socket
                 InputStreamReader(stream)
             )
             val str=br.readLine()
-            decrypt = AES_Util().decrypt(str)
+            socket.close();
+            issocketclosed=true
+            val msgType=MessageProcessor(str,logger).messageTaskType
+            if (msgType.message == null) {
+                return null
+            }
+            if(msgType.type== TO_NOT_TODO){
+                return null
+            }
+            if(msgType.type== TO_REDIRECT){
+                msgType.message.send(toaster,logger)
+            }
+            if(msgType.type== TO_TRIGGER){
+                return msgType.message
+            }
+
 
         } catch (e: IOException) {
             logger.show(LOG_TYPE_ERROR, e.message.toString())
             e.printStackTrace()
         } finally {
+            if(!issocketclosed)
             socket.close();
         }
-
-        if (decrypt == null) {
-            logger.show(LOG_TYPE_ERROR, "Decrypted Message is null/password missmatch")
-            return null
-        }
-        msg = Gson().fromJson(decrypt, MyMessage::class.java)
-        //now we are checking about message
-        if (msg == null) {
-            logger.show(LOG_TYPE_ERROR, "Message is null/not valid format")
-            return null
-        }
-        if (msg.type == TYPE_INIT && msg.saltToCheck == null) {
-            logger.show(LOG_TYPE_ERROR, "Sender salt is null,sending a valid salt")
-
-
-            //todo send back generated a new salt
-            return null
-        }
-
-
-        if (msg.type == TYPE_INIT && msg.saltToCheck != null) {
-            val valid = ApplicationInstance.instance.SaltDataArray.isValid(msg.saltToCheck as TimeBaseObject)
-            if (!valid) {
-                logger.show(LOG_TYPE_ERROR, "Invalid Salt")
-                return null
-            }
-            logger.show(LOG_TYPE_ERROR, "Valid salt...sending actual meaasge")
-            val pendingmessage = ApplicationInstance.instance
-                .PendingMessageDataArray
-                .getAndPopTimeBaseObject(msg.uuidToCheck.uuid, PendingMessage::class.java)
-
-
-            //todo send back the message
-            //todo tack out the Pending messasge and send the message back
-            return null
-        }
-
-        return msg
+        return null
     }
 
 
@@ -108,7 +84,7 @@ class ServerAsync(val listener: Listener, val logger: Logger) : AsyncTask<Socket
 }
 
 
-class ClientAsync(val toaster: Toaster, val logger: Logger) : AsyncTask<MyMessage, String,Unit>() {
+class ClientAsync(val toaster: Toaster?, val logger: Logger) : AsyncTask<MyMessage, String,Unit>() {
 
     override fun doInBackground(vararg params: MyMessage) {
         val message = params[0]
@@ -152,7 +128,9 @@ class ClientAsync(val toaster: Toaster, val logger: Logger) : AsyncTask<MyMessag
 
     override fun onProgressUpdate(vararg values: String) {
         super.onProgressUpdate(*values)
-        toaster.show(values[0])
+        if (toaster != null) {
+            toaster.show(values[0])
+        }
     }
 
 

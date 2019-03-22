@@ -1,6 +1,5 @@
 package com.unbi.connect.service
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -13,7 +12,7 @@ import com.unbi.connect.uiclasses.OngoingNotificationBuilder
 import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
-import android.content.Context.NOTIFICATION_SERVICE
+import com.unbi.connect.messaging.MyMessage
 
 
 class TCPservice : BaseService(), Listener, Logger {
@@ -69,6 +68,8 @@ class TCPservice : BaseService(), Listener, Logger {
         showforeground()
     }
 
+    private val toaster: Toaster?=null//todo set thsi value
+
     private fun showforeground() {
 
         Thread(Runnable {
@@ -77,7 +78,7 @@ class TCPservice : BaseService(), Listener, Logger {
                 socServer=Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync(this, this)
+                    val serverAsyncTask = ServerAsync(this, this,toaster)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
