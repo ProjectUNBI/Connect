@@ -6,4 +6,8 @@
     <dimen name="smalest_margin_from_wall">10sp</dimen>
     <dimen name="small_bold">25sp</dimen>
     <dimen name="medium_bold">35sp</dimen>
+    <dimen name="plugin_group_height">100dp</dimen>
+    <dimen name="plugin_title_text">28sp</dimen>
+    <dimen name="plugin_object_height">50dp</dimen>
+    <dimen name="plugin_text_size">23sp</dimen>
 </resources>

@@ -45,10 +45,10 @@ class TCPservice : BaseService(), Listener, Logger {
             return START_STICKY
         }
         val startedby = intent.getStringExtra(STARTED_FROM)
-        if (startedby.equals(MainActivity::class.java.canonicalName)) {
+        if (startedby!=null&&startedby.equals(MainActivity::class.java.canonicalName)) {
             return START_STICKY//return as it is started from main activity
         }
-        //todo parse message and send
+        //todo parse message and sendAsync
 
 
         return START_STICKY;

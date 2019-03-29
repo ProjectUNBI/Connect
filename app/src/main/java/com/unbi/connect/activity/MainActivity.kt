@@ -2,11 +2,8 @@ package com.unbi.connect.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputType
 import android.text.method.PasswordTransformationMethod
-import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.widget.*
 import com.google.gson.Gson
 import com.unbi.connect.Userdata
@@ -14,9 +11,6 @@ import com.unbi.connect.bind
 import com.unbi.connect.fragment.FragmentAbout
 import com.unbi.connect.fragment.FragmentCustomActivity
 import com.unbi.connect.fragment.FragmentLogView
-import kotlinx.android.synthetic.main.activity_main.*
-import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
-import android.support.v4.content.ContextCompat.getSystemService
 import android.view.inputmethod.InputMethodManager
 import com.unbi.connect.R
 
@@ -62,7 +56,9 @@ class MainActivity : BaseMainActivity() {
                 }
                 edit_password.setTransformationMethod(PasswordTransformationMethod())
                 but_save.isEnabled = false
+                Userdata.instance.isReadedfromSpref=false
                 hidefocus(view)
+//                Toast.makeText(applicationContext,"Please force stop and restart the app else tasker plugin will not working properly...",Toast.LENGTH_LONG).show()
             }
         }
     }

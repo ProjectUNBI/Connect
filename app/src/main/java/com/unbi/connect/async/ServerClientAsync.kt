@@ -19,17 +19,17 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
         try {
 
             val stream = socket.getInputStream()
-            val out = PrintWriter(
-                socket.getOutputStream(),
-                true
-            )
+//            val out = PrintWriter(// fotr response
+//                socket.getOutputStream(),
+//                true
+//            )
 
             //out.println("Welcome to \""+Server_Name+"\" Server");//it is the reply
-
+            // actually id dont want to do any response to the cleint.. we will send directly to the  cleint server ipPort
             val br = BufferedReader(
                 InputStreamReader(stream)
             )
-            val str=br.readLine()
+            val str=br.readLine()// read alll the line
             socket.close();
             issocketclosed=true
             val msgType=MessageProcessor(str,logger).messageTaskType
@@ -40,7 +40,7 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
                 return null
             }
             if(msgType.type== TO_REDIRECT){
-                msgType.message.send(toaster,logger)
+                msgType.message.sendAsync(msgType.thesender,toaster,logger)
             }
             if(msgType.type== TO_TRIGGER){
                 return msgType.message
@@ -65,17 +65,15 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
         }
         //from this return if salt to check is null. we dont want to parse such message
         if (message.saltToCheck == null) {
-            logger.show(LOG_TYPE_ERROR, "Salt is null and message is not of init type")
-            return
+            logger.show(LOG_TYPE_ERROR, "Salt is null and message is not of init mtype")
+            return// validdating salt to check is not null again.. not need to do it
         }
-        val valid = ApplicationInstance.instance.SaltDataArray.isValid(message.saltToCheck as TimeBaseObject)
 
         if (!ApplicationInstance.instance.SaltDataArray.isValid(message.saltToCheck)) {
-            logger.show(LOG_TYPE_ERROR, "Invalid Salt and message is not of init type")
+            logger.show(LOG_TYPE_ERROR, "Invalid Salt and message is not of init mtype")
             Log.d(LOGTAG, "salt is not valid")
             return
         }
-
         //now we have got a valid message .... do something
         //todo perform some interesting Task
         listener.ActionComplete(message)
@@ -84,7 +82,7 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
 }
 
 
-class ClientAsync(val toaster: Toaster?, val logger: Logger) : AsyncTask<MyMessage, String,Unit>() {
+class ClientAsync(val ipPort: IpPort?, val toaster: Toaster?, val logger: Logger?) : AsyncTask<MyMessage, String,Unit>() {
 
     override fun doInBackground(vararg params: MyMessage) {
         val message = params[0]
@@ -92,8 +90,14 @@ class ClientAsync(val toaster: Toaster?, val logger: Logger) : AsyncTask<MyMessa
         val stringTosend = message.getEncryptedMsg()
 
         try {
-            val serverAddr = InetAddress.getByName(message.sender.ip)
-            val socket = Socket(serverAddr, message.sender.port)
+            if (ipPort == null) {
+                logger?.show(LOG_TYPE_ERROR, "Null ip and port")
+                publishProgress("Null ip and port")
+                Log.e(MyMessage::class.java.simpleName, "Null ip and port")
+                return
+            }
+            val serverAddr = InetAddress.getByName(ipPort.ip)
+            val socket = Socket(serverAddr, ipPort.port)
 
             //made connection, setup the read (in) and write (out)
             val out = PrintWriter(BufferedWriter(OutputStreamWriter(socket.getOutputStream())), true)
@@ -106,7 +110,7 @@ class ClientAsync(val toaster: Toaster?, val logger: Logger) : AsyncTask<MyMessa
                 val str = input.readLine()
                 out.flush()
             } catch (e: Exception) {
-                logger.show(LOG_TYPE_ERROR, e.message.toString())
+                logger?.show(LOG_TYPE_ERROR, e.message.toString())
                 publishProgress(e.message)
                 Log.e(MyMessage::class.java.simpleName, e.message)
 
@@ -117,11 +121,11 @@ class ClientAsync(val toaster: Toaster?, val logger: Logger) : AsyncTask<MyMessa
             }
 
         } catch (e: Exception) {
-            logger.show(LOG_TYPE_ERROR, e.message.toString())
+            logger?.show(LOG_TYPE_ERROR, e.message.toString())
             publishProgress(e.message)
             Log.e(MyMessage::class.java.simpleName, e.message)
         }
-        logger.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+message.sender.ip+":"+message.sender.port)
+        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+message.sender.ip+":"+message.sender.port)
         publishProgress("success")
         return
     }

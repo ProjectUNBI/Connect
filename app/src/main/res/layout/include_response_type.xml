@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_response"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/checkbox_is_Success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_it_success" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/plugin_group_height"
+            android:layout_marginStart="@dimen/smalest_margin_from_wall"
+            android:layout_marginEnd="@dimen/smalest_margin_from_wall">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plugin_object_height"
+                android:gravity="center|left"
+                android:text="@string/message_id"
+                android:textColor="@color/black"
+                android:textSize="@dimen/plugin_title_text"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plugin_object_height"
+                android:layout_gravity="bottom">
+
+                <EditText
+                    android:id="@+id/editplugin_message_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/put_your_task_uuid"
+                    android:maxLines="1"
+                    android:textSize="@dimen/plugin_text_size" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/plugin_group_height"
+            android:layout_marginStart="@dimen/smalest_margin_from_wall"
+            android:layout_marginEnd="@dimen/smalest_margin_from_wall">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plugin_object_height"
+                android:gravity="center|left"
+                android:text="@string/messagesalt"
+                android:textColor="@color/black"
+                android:textSize="@dimen/plugin_title_text"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plugin_object_height"
+                android:layout_gravity="bottom">
+
+
+                <EditText
+                    android:id="@+id/editplugin_message_salt"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/salttocheck"
+                    android:maxLines="1"
+                    android:textSize="@dimen/plugin_text_size" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
+</LinearLayout>

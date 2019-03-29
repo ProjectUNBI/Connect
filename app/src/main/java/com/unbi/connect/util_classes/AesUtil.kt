@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec
 
 class AES_Util {
     fun encrypt(stringExtra: String?): String? {
-        val byte=Userdata.instance.byte_globalpassword
+        val byte=Userdata.instance.byte_global_password
         if (byte == null||stringExtra==null) {
             return null
         }
@@ -18,7 +18,7 @@ class AES_Util {
     }
 
     fun decrypt(string: String?): String? {
-        val byte=Userdata.instance.byte_globalpassword
+        val byte=Userdata.instance.byte_global_password
         if (byte == null||string==null) {
             return null
         }

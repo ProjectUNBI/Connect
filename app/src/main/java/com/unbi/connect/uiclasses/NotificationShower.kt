@@ -33,8 +33,9 @@ class OngoingNotificationBuilder {
             val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE)
             chan.lightColor = Color.BLUE
             chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-            val manager = (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)!!
-            manager.createNotificationChannel(chan)
+            val manager = (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)
+            if (manager != null) {
+                manager.createNotificationChannel(chan)
 
             val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             val notification = notificationBuilder.setOngoing(true)
@@ -45,6 +46,8 @@ class OngoingNotificationBuilder {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build()
             return notification
+            }
+
         } else {
             val notification = Notification.Builder(context)
                 .setContentTitle(title)
@@ -55,6 +58,7 @@ class OngoingNotificationBuilder {
 
             return notification
         }
+        return null
     }
 
 

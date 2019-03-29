@@ -11,5 +11,5 @@ interface Logger{
 }
 
 interface Toaster{
-    fun show(msg:String)
+    fun show(msg: String?)
 }

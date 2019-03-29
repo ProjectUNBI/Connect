@@ -19,8 +19,9 @@ class Userdata private constructor() {
     val MY_PREFS_NAME: String = "com.unbi.connect.preferenece.Userdata"
 
     //instance variable
+    var isReadedfromSpref=false//to check from background service in tasker
     var isToast=true
-    var ipport: IpPort = IpPort("0.0.0.0", 8080)
+    var ipport: IpPort = IpPort(getDeviceIpAddress(), 6868)
     var global_password: String = ""
         set(value) {
             field = value
@@ -28,11 +29,11 @@ class Userdata private constructor() {
                 return
             }
             var key = global_password.toByteArray()
-            val sha = MessageDigest.getInstance("SHA-1")
+            val sha = MessageDigest.getInstance("SHA-256")
             key = sha.digest(key)
-            byte_globalpassword = Arrays.copyOf(key, 16)
+            byte_global_password = Arrays.copyOf(key, 32)//todo change it
         }
-    var byte_globalpassword: ByteArray? = null
+    var byte_global_password: ByteArray? = null
         private set
     var iscustomactivity = false
     var islogview_enable = false
@@ -52,7 +53,6 @@ class Userdata private constructor() {
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
             R.id.switch_enable_toast->isToast=value as Boolean
         }
-
         if (applicationContext == null) return
         val editor = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).edit()
         val string = Gson().toJson(this)
@@ -74,7 +74,7 @@ class Userdata private constructor() {
         isToast=userdata.isToast
         ipport = IpPort(getDeviceIpAddress(), userdata.ipport.port)
         global_password = userdata.global_password
-        byte_globalpassword = userdata.byte_globalpassword
+        byte_global_password = userdata.byte_global_password
         iscustomactivity = userdata.iscustomactivity
         islogview_enable = userdata.islogview_enable
 

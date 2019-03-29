@@ -1,34 +1,84 @@
 package com.unbi.connect.messaging
 
+import android.util.Log
 import com.google.gson.Gson
 import com.unbi.connect.*
 import com.unbi.connect.async.ClientAsync
 import com.unbi.connect.util_classes.AES_Util
+import java.io.*
+import java.lang.Exception
+import java.net.InetAddress
+import java.net.Socket
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MyMessage(
-    val saltToAdd: Salt/*This salt is to be add in nxt message if send*/,
+    val saltToAdd: Salt?/*This salt is to be add in nxt message if sendAsync*/,
     val saltToCheck: Salt?/*This salt is to Check from the previously stored data*/,
     val sender: IpPort,
     val tag: String?,
     val message: String?,
     val extra: Extra?,
     val isIntent: Boolean,
-    val type: Int,
+    val mtype: Int,
     val uuidToadd: MsgUUID?,
-    val uuidToCheck: MsgUUID,
-    val taskName: String?=null,
+    val uuidToCheck: MsgUUID?,
+    val taskName: String? = null,
     val resultCode: Int = RESULT_UNKNOWN
 ) {
     fun getEncryptedMsg(): String? {
         return AES_Util().encrypt(Gson().toJson(this))
     }
 
-    fun send(toaster: Toaster?, logger: Logger) {//maybe a time consuming tasek
-        val async=ClientAsync(toaster,logger)
+    fun sendAsync(ipport: IpPort?, toaster: Toaster?, logger: Logger?) {
+        val async = ClientAsync(ipport, toaster, logger)
         async.execute(this)
+    }
+
+    fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?){
+
+        val stringTosend = this.getEncryptedMsg()
+
+        try {
+            if (ipPort == null) {
+                logger?.show(LOG_TYPE_ERROR, "Null ip and port")
+                toaster?.show("Null ip and port")
+                Log.e(MyMessage::class.java.simpleName, "Null ip and port")
+                return
+            }
+            val serverAddr = InetAddress.getByName(ipPort.ip)
+            val socket = Socket(serverAddr, ipPort.port)
+
+            //made connection, setup the read (in) and write (out)
+            val out = PrintWriter(BufferedWriter(OutputStreamWriter(socket.getOutputStream())), true)
+            val input = BufferedReader(InputStreamReader(socket.getInputStream()))
+
+            try {
+                //write a message to the server
+                out.println(stringTosend)
+                //read back a message from the server.
+                val str = input.readLine()
+                out.flush()
+            } catch (e: Exception) {
+                logger?.show(LOG_TYPE_ERROR, e.message.toString())
+                toaster?.show(e.message)
+                Log.e(MyMessage::class.java.simpleName, e.message)
+
+            } finally {
+                input.close()
+                out.close()
+                socket.close()
+            }
+
+        } catch (e: Exception) {
+            logger?.show(LOG_TYPE_ERROR, e.message.toString())
+            toaster?.show(e.message)
+            Log.e(MyMessage::class.java.simpleName, e.message)
+        }
+        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+this.sender.ip+":"+this.sender.port)
+        toaster?.show("success")
     }
 
 }
@@ -44,25 +94,17 @@ class PendingMessage(val message: MyMessage, milli: Long) : TimeBaseObject(milli
 }
 
 
-class MsgUUID(var uuid: String = "", val taskName: String) {
+class MsgUUID(var uuid: String ?= "") {
 
-    fun generate(data: DataList) {
-        if (uuid.equals("")) {
+    fun generate() {
+        if (uuid.equals("")||uuid==null) {
             uuid = UUID_PREFIX + UUID.randomUUID().toString()
         }
+
     }
 
 }
-//class MsgUUID(var uuid: String = "", milli: Long, val taskName: String) : TimeBaseObject(milli) {
-//
-//    fun generate(data: DataList) {
-//        if (uuid.equals("")) {
-//            uuid = UUID_PREFIX+UUID.randomUUID().toString()
-//        }
-//        data.add(this)
-//    }
-//
-//}
+
 
 class DataList {
 
@@ -82,7 +124,7 @@ class DataList {
             while (i.hasNext()) {
                 val dataobject = i.next() // must be called before you can call i.remove()
                 // Do something
-                if ((dataobject as PendingMessage).message.uuidToCheck.equals(identifier)) {
+                if ((dataobject as PendingMessage).message.uuidToadd?.uuid.equals(identifier)) {
                     return dataobject as T
 
                 }
@@ -122,7 +164,7 @@ class DataList {
             while (i.hasNext()) {
                 val dataobject = i.next() // must be called before you can call i.remove()
                 // Do something
-                if (timeBaseObject.message.uuidToCheck.uuid.equals((dataobject as PendingMessage).message.uuidToCheck.uuid)) {
+                if (timeBaseObject.message.uuidToadd?.uuid.equals((dataobject as PendingMessage).message.uuidToadd?.uuid)) {
                     existed = true
                 }
             }//end of while
@@ -175,7 +217,7 @@ class DataList {
 }
 
 
-class Salt(var saltString: String = "", milli: Long) : TimeBaseObject(milli) {
+class Salt(var saltString: String? = "", milli: Long) : TimeBaseObject(milli) {
 
     fun generate(data: DataList): Salt {
         if (saltString.equals("")) {
@@ -188,10 +230,22 @@ class Salt(var saltString: String = "", milli: Long) : TimeBaseObject(milli) {
 }
 
 
-class Extra(val key: String, val body: String)
+class Extra(val hash: HashMap<String, String>)
 
 
-class IpPort(val ip: String, val port: Int)
+class IpPort(val ip: String, val port: Int) {
+    companion object {
+        fun generate(string: String): IpPort? {
+            try {
+                val array = string.split(":")
+                return IpPort(array[0], array[1].toInt())
+            } catch (e: Exception) {
+                return null
+            }
+
+        }
+    }
+}
 
 
 /*

@@ -1,1 +1,3 @@
 include ':app'
+include ':localesdk'
+project(':localesdk').projectDir = new File('C:\\Users\\Glu\\Desktop\\224ram\\android-plugin-client-sdk-for-locale-master\\pluginClientSdkLib')
