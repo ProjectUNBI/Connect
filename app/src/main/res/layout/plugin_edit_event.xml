@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:background="@color/dark_grey"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <RadioButton
+                android:id="@+id/event_radio_it_is_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/is_message_type_event"
+                android:textColor="@color/black" />
+
+        <RadioButton
+                android:id="@+id/event_radio_it_is_response"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/is_response_type_event"
+                android:textColor="@color/black" />
+
+
+        <LinearLayout
+                android:id="@+id/event_layout_meaasge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/plugin_group_height"
+                    android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                    android:layout_marginEnd="@dimen/smalest_margin_from_wall">
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/plugin_object_height"
+                        android:gravity="center|left"
+                        android:text="@string/tag_string"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/plugin_title_text"
+                        android:textStyle="bold" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/plugin_object_height"
+                        android:layout_gravity="bottom">
+
+                    <EditText
+                            android:id="@+id/event_editplugin_tag"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:hint="@string/put_tag_here"
+                            android:maxLines="1"
+                            android:textSize="@dimen/plugin_text_size" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plugin_group_height"
+                android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                android:layout_marginEnd="@dimen/smalest_margin_from_wall">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/plugin_object_height"
+                    android:gravity="center|left"
+                    android:text="@string/message"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/plugin_title_text"
+                    android:textStyle="bold" />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/plugin_object_height"
+                    android:layout_gravity="bottom">
+
+
+                <EditText
+                        android:id="@+id/event_editplugin_message"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="@string/put_long_message"
+                        android:maxLines="1"
+                        android:textSize="@dimen/plugin_text_size" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+</ScrollView>

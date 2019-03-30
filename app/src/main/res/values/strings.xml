@@ -54,4 +54,6 @@
     <string name="password_local_only">Password(only for custom activity)</string>
     <string name="task_name">Task name</string>
     <string name="taskname_hint">Task name</string>
+    <string name="is_response_type_event">Response</string>
+    <string name="is_message_type_event">Message</string>
 </resources>

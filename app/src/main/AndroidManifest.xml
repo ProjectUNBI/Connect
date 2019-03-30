@@ -52,13 +52,17 @@ Be sure to test that the app works without a touchscreen. -->
         <!--Edit Activity-->
 
         <activity
-                android:name="com.unbi.connect.plugin.event.EditActivity"
-                android:exported="false"
+                android:name="com.unbi.connect.plugin.event.EventEditActivity"
+                android:exported="true"
                 android:label="@string/plugin_name"
                 android:theme="@style/Theme.AppCompat"
                 android:uiOptions="splitActionBarWhenNarrow"
                 android:windowSoftInputMode="adjustResize"
-                tools:ignore="UnusedAttribute"/>
+                tools:ignore="ExportedActivity">
+            <intent-filter>
+                <action android:name="net.dinglisch.android.tasker.ACTION_EDIT_EVENT" />
+            </intent-filter>
+        </activity>
         <!--
                   This is the "edit" Activity. Note that the host will reject plug-in
                   Activities for the following reasons:
@@ -69,7 +73,7 @@ Be sure to test that the app works without a touchscreen. -->
                       - The Activity requires permissions not available to the host
              -->
         <activity
-                android:name="com.unbi.connect.plugin.task.EditActivity"
+                android:name="com.unbi.connect.plugin.task.TaskEditActivity"
                 android:exported="false"
                 android:label="@string/plugin_name"
                 android:theme="@style/Theme.AppCompat"
@@ -85,25 +89,25 @@ Be sure to test that the app works without a touchscreen. -->
                       - The Activity isn't enabled (e.g. android:enabled="false")
                       - The Activity requires permissions not available to the host
              -->
-        <activity-alias
-                android:name="com.unbi.connect.plugin.PluginApplicationEvent"
-                android:exported="true"
-                android:icon="@drawable/draw_lock_connection"
-                android:label="@string/plugin_name"
-                android:targetActivity="com.unbi.connect.plugin.event.EditActivity"
-                tools:ignore="ExportedActivity">
-            <!-- this Intent filter allows the plug-in to be discovered by the host. -->
-            <intent-filter>
-                <action android:name="net.dinglisch.android.tasker.ACTION_EDIT_EVENT" />
-            </intent-filter>
-        </activity-alias>
+        <!--<activity-alias-->
+                <!--android:name="com.unbi.connect.plugin.PluginApplicationEvent"-->
+                <!--android:exported="true"-->
+                <!--android:icon="@drawable/draw_lock_connection"-->
+                <!--android:label="@string/plugin_name"-->
+                <!--android:targetActivity="com.unbi.connect.plugin.event.EventEditActivityivity"-->
+                <!--tools:ignore="ExportedActivity">-->
+            <!--&lt;!&ndash; this Intent filter allows the plug-in to be discovered by the host. &ndash;&gt;-->
+            <!--<intent-filter>-->
+            <!--<action android:name="net.dinglisch.android.tasker.ACTION_EDIT_EVENT" />-->
+        <!--</intent-filter>-->
+        <!--</activity-alias>-->
 
         <activity-alias
                 android:name="com.unbi.connect.plugin.PluginApplicationTask"
                 android:exported="true"
                 android:icon="@drawable/draw_lock_connection"
                 android:label="@string/plugin_name"
-                android:targetActivity="com.unbi.connect.plugin.task.EditActivity"
+                android:targetActivity="com.unbi.connect.plugin.task.TaskEditActivity"
                 tools:ignore="ExportedActivity">
             <!-- this Intent filter allows the plug-in to be discovered by the host. -->
             <intent-filter>

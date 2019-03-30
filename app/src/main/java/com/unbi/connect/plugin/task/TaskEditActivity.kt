@@ -16,7 +16,7 @@ import com.unbi.connect.bind
 import java.util.regex.Pattern
 
 
-class EditActivity : AbstractAppCompatPluginActivity() {
+class TaskEditActivity : AbstractAppCompatPluginActivity() {
 
     private val radio_message: RadioButton by bind(R.id.radio_it_is_message)
     private val radio_response: RadioButton by bind(R.id.radio_it_is_response)

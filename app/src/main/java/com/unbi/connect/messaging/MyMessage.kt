@@ -37,7 +37,7 @@ class MyMessage(
         async.execute(this)
     }
 
-    fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?){
+    fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?) {
 
         val stringTosend = this.getEncryptedMsg()
 
@@ -77,7 +77,7 @@ class MyMessage(
             toaster?.show(e.message)
             Log.e(MyMessage::class.java.simpleName, e.message)
         }
-        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+this.sender.ip+":"+this.sender.port)
+        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: " + this.sender.ip + ":" + this.sender.port)
         toaster?.show("success")
     }
 
@@ -94,10 +94,10 @@ class PendingMessage(val message: MyMessage, milli: Long) : TimeBaseObject(milli
 }
 
 
-class MsgUUID(var uuid: String ?= "") {
+class MsgUUID(var uuid: String? = "") {
 
     fun generate() {
-        if (uuid.equals("")||uuid==null) {
+        if (uuid.equals("") || uuid == null) {
             uuid = UUID_PREFIX + UUID.randomUUID().toString()
         }
 
@@ -111,106 +111,131 @@ class DataList {
     var lasttimepoped = System.currentTimeMillis()
 
     var arrayOftbObject: ArrayList<TimeBaseObject> = ArrayList()
-
+    private val lock = Any()
 
     fun <T : TimeBaseObject> getAndPopTimeBaseObject(identifier: String?, kclass: Class<T>): T? {
-        val nameKlass = kclass.canonicalName
-        if (nameKlass == null) {
+        synchronized(lock) {
+            val nameKlass = kclass.canonicalName
+            if (nameKlass == null) {
+                return null
+            }
+            val i = arrayOftbObject.iterator()
+//        var objectoreturn: TimeBaseObject? = null
+            if (nameKlass.equals(PendingMessage::class.java.canonicalName)) {
+                while (i.hasNext()) {
+                    val dataobject = i.next() // must be called before you can call i.remove()
+                    // Do something
+                    if ((dataobject as PendingMessage).message.uuidToadd?.uuid.equals(identifier)) {
+                        i.remove()
+                        return dataobject as T
+
+                    }
+                }//end of while
+            }
+            if (nameKlass.equals(Salt::class.java.canonicalName)) {
+
+                while (i.hasNext()) {
+                    val dataobject = i.next() // must be called before you can call i.remove()
+                    // Do something
+                    if ((dataobject as Salt).saltString.equals(identifier)) {
+                        i.remove()
+                        return dataobject as T
+                    }
+                }//end of while
+
+            }
             return null
         }
-        val i = arrayOftbObject.iterator()
-        var objectoreturn: TimeBaseObject? = null
-        if (nameKlass.equals(PendingMessage::class.java.canonicalName)) {
-            while (i.hasNext()) {
-                val dataobject = i.next() // must be called before you can call i.remove()
-                // Do something
-                if ((dataobject as PendingMessage).message.uuidToadd?.uuid.equals(identifier)) {
-                    return dataobject as T
-
-                }
-            }//end of while
-        }
-        if (nameKlass.equals(Salt::class.java.canonicalName)) {
-
-            while (i.hasNext()) {
-                val dataobject = i.next() // must be called before you can call i.remove()
-                // Do something
-                if ((dataobject as Salt).saltString.equals(identifier)) {
-                    return dataobject as T
-                }
-            }//end of while
-
-        }
-        return null
     }
 
 
     fun add(timeBaseObject: TimeBaseObject) {
-        var existed = false
-        //i dont know if i should add the following code
-        val i = arrayOftbObject.iterator()
+        synchronized(lock) {
+            var existed = false
+            //i dont know if i should add the following code
+            val i = arrayOftbObject.iterator()
 
-        if (timeBaseObject is Salt) {
-            while (i.hasNext()) {
-                val dataobject = i.next() // must be called before you can call i.remove()
-                // Do something
-                if (timeBaseObject.saltString.equals((dataobject as Salt).saltString)) {
-                    existed = true
-                }
-            }//end of while
+            if (timeBaseObject is Salt) {
+                while (i.hasNext()) {
+                    val dataobject = i.next() // must be called before you can call i.remove()
+                    // Do something
+                    if (timeBaseObject.saltString.equals((dataobject as Salt).saltString)) {
+                        existed = true
+                    }
+                }//end of while
 
-        }
-        if (timeBaseObject is PendingMessage) {
-            while (i.hasNext()) {
-                val dataobject = i.next() // must be called before you can call i.remove()
-                // Do something
-                if (timeBaseObject.message.uuidToadd?.uuid.equals((dataobject as PendingMessage).message.uuidToadd?.uuid)) {
-                    existed = true
-                }
-            }//end of while
-
-
-        }
+            }
+            if (timeBaseObject is PendingMessage) {
+                while (i.hasNext()) {
+                    val dataobject = i.next() // must be called before you can call i.remove()
+                    // Do something
+                    if (timeBaseObject.message.uuidToadd?.uuid.equals((dataobject as PendingMessage).message.uuidToadd?.uuid)) {
+                        existed = true
+                    }
+                }//end of while
 
 
-        /////////////////////////////////////
-        if (!existed) {
-            arrayOftbObject.add(timeBaseObject)
+            }
+
+
+            /////////////////////////////////////
+            if (!existed) {
+                arrayOftbObject.add(timeBaseObject)
+            }
         }
     }
 
     fun isValid(timeBaseObject: TimeBaseObject): Boolean {//Calling this method more than once cause invalidUUid as it is removed from database
-        if (lasttimepoped + MAXIMUM_TIME < System.currentTimeMillis()) {
-            //this is not to pop again and again if the "isValid" is run within ten second
-            popexpiredObject()
+        synchronized(lock) {
+            if (lasttimepoped + MAXIMUM_TIME < System.currentTimeMillis()) {
+                //this is not to pop again and again if the "isValid" is run within ten second
+                popexpiredObjectNonSync()
+            }
+            var isvalid = false;
+            val i = arrayOftbObject.iterator()
+
+            if (timeBaseObject is Salt) {
+                while (i.hasNext()) {
+                    val dataobject = i.next() // must be called before you can call i.remove()
+                    // Do something
+                    if (timeBaseObject.saltString.equals((dataobject as Salt).saltString)) {
+                        isvalid = true
+                        i.remove()
+                    }
+                }//end of while
+
+            }
+            return isvalid
         }
-        var isvalid = false;
-        val i = arrayOftbObject.iterator()
-
-        if (timeBaseObject is Salt) {
-            while (i.hasNext()) {
-                val dataobject = i.next() // must be called before you can call i.remove()
-                // Do something
-                if (timeBaseObject.saltString.equals((dataobject as Salt).saltString)) {
-                    isvalid = true
-                    i.remove()
-                }
-            }//end of while
-
-        }
-        return isvalid
-
     }
 
+    /*
+    I am afraid of death lock so i am making another faunction to be called from a Synchronise method
+     */
+    fun popexpiredObjectNonSync() {//todo check if it is removing or not
+            lasttimepoped = System.currentTimeMillis()
+            val time = lasttimepoped - MAXIMUM_TIME
+            val i = arrayOftbObject.iterator()
+            while (i.hasNext()) {
+                val timeBaseObject = i.next() // must be called before you can call i.remove()
+                // Do something
+                if (timeBaseObject.milli < time) {
+                    i.remove()
+                }
+            }
+
+    }
     fun popexpiredObject() {//todo check if it is removing or not
-        lasttimepoped = System.currentTimeMillis()
-        val time = lasttimepoped - MAXIMUM_TIME
-        val i = arrayOftbObject.iterator()
-        while (i.hasNext()) {
-            val timeBaseObject = i.next() // must be called before you can call i.remove()
-            // Do something
-            if (timeBaseObject.milli < time) {
-                i.remove()
+        synchronized(lock) {
+            lasttimepoped = System.currentTimeMillis()
+            val time = lasttimepoped - MAXIMUM_TIME
+            val i = arrayOftbObject.iterator()
+            while (i.hasNext()) {
+                val timeBaseObject = i.next() // must be called before you can call i.remove()
+                // Do something
+                if (timeBaseObject.milli < time) {
+                    i.remove()
+                }
             }
         }
     }

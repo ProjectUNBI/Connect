@@ -13,14 +13,24 @@ import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
 import com.unbi.connect.messaging.MyMessage
+import com.unbi.connect.plugin.event.EventEditActivity
 import com.unbi.connect.util_classes.CustomActivityProcessor
 
 
 class TCPservice : BaseService(), Listener, Logger {
-    private val NOTY_ID_NOTSET=-99
+
+    val INTENT_REQUEST_REQUERY = Intent(
+        com.twofortyfouram.locale.api.Intent.ACTION_REQUEST_QUERY
+    ).putExtra(
+        com.twofortyfouram.locale.api.Intent.EXTRA_STRING_ACTIVITY_CLASS_NAME,
+        EventEditActivity::class.java.getName()
+    )
+
+    ////////////////
+    private val NOTY_ID_NOTSET = -99
     var serviceisNotStart: Boolean = true
     var mySocket: Socket? = null
-    var socServer:ServerSocket?=null
+    var socServer: ServerSocket? = null
     val binder = LocalBinder()
     var notiId: Int = NOTY_ID_NOTSET
 
@@ -46,7 +56,7 @@ class TCPservice : BaseService(), Listener, Logger {
             return START_STICKY
         }
         val startedby = intent.getStringExtra(STARTED_FROM)
-        if (startedby!=null&&startedby.equals(MainActivity::class.java.canonicalName)) {
+        if (startedby != null && startedby.equals(MainActivity::class.java.canonicalName)) {
             return START_STICKY//return as it is started from main activity
         }
         //todo parse message and sendAsync
@@ -56,30 +66,29 @@ class TCPservice : BaseService(), Listener, Logger {
     }
 
 
-
     fun restartServer() {
         socServer?.close()
         mySocket?.close()
         this.stopForeground(false);
         val ns = Context.NOTIFICATION_SERVICE
         val mNotificationManager = getSystemService(ns) as NotificationManager
-        if (notiId !=NOTY_ID_NOTSET) {
+        if (notiId != NOTY_ID_NOTSET) {
             mNotificationManager.cancel(notiId)
         }
         showforeground()
     }
 
-    private val toaster: Toaster?=null//todo set thsi value
+    private val toaster: Toaster? = null//todo set thsi value
 
     private fun showforeground() {
 
         Thread(Runnable {
             try {
                 val Server = ServerSocket(Userdata.instance.ipport.port)
-                socServer=Server
+                socServer = Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync(this, this,toaster)
+                    val serverAsyncTask = ServerAsync(this, this, toaster)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
@@ -102,22 +111,26 @@ class TCPservice : BaseService(), Listener, Logger {
     }
 
     override fun ActionComplete(message: MyMessage) {
-        if(ApplicationInstance.instance.isCapturingMode){
+        if (ApplicationInstance.instance.isCapturingMode) {
             //todo capture the message and shoew to custom Activity
             return
         }
-        if(Userdata.instance.iscustomactivity){
-            val customActivityProcessor=CustomActivityProcessor(message)
-            if(customActivityProcessor.isTriggered){
+        if (Userdata.instance.iscustomactivity) {
+            val customActivityProcessor = CustomActivityProcessor(message)
+            if (customActivityProcessor.isTriggered) {
                 customActivityProcessor.performIt()
                 return
             }
-        }else{
-            //todo trigge the valid mesaage to do taskes
-
-
         }
-
+        //todo trigge the valid mesaage to do taskes
+        if (message.isIntent) {
+            TODO("SENT AS INTENT")
+            return
+        }
+        ApplicationInstance.instance.pendingtaskertask.addPending(message)
+        TaskerPlugin.Event.addPassThroughMessageID(INTENT_REQUEST_REQUERY)
+        applicationContext.sendBroadcast(INTENT_REQUEST_REQUERY)
+        return
 
 
     }

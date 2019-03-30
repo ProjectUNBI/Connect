@@ -4,10 +4,14 @@ import android.content.Context
 import com.google.gson.Gson
 import com.unbi.connect.messaging.DataList
 import com.unbi.connect.messaging.IpPort
+import com.unbi.connect.messaging.MyMessage
+import com.unbi.connect.messaging.PendingMessage
+import com.unbi.connect.plugin.event.EditActivityEventValues
 import java.net.NetworkInterface
 import java.security.MessageDigest
 import java.util.*
 import java.net.SocketException
+import kotlin.collections.ArrayList
 
 
 //never use "object" it is a trap... it will not work with Gson
@@ -19,8 +23,8 @@ class Userdata private constructor() {
     val MY_PREFS_NAME: String = "com.unbi.connect.preferenece.Userdata"
 
     //instance variable
-    var isReadedfromSpref=false//to check from background service in tasker
-    var isToast=true
+    var isReadedfromSpref = false//to check from background service in tasker
+    var isToast = true
     var ipport: IpPort = IpPort(getDeviceIpAddress(), 6868)
     var global_password: String = ""
         set(value) {
@@ -51,7 +55,7 @@ class Userdata private constructor() {
             }
             R.id.edit_password -> global_password = value as String
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
-            R.id.switch_enable_toast->isToast=value as Boolean
+            R.id.switch_enable_toast -> isToast = value as Boolean
         }
         if (applicationContext == null) return
         val editor = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).edit()
@@ -71,7 +75,7 @@ class Userdata private constructor() {
             return
         }
         //copying variable valuer
-        isToast=userdata.isToast
+        isToast = userdata.isToast
         ipport = IpPort(getDeviceIpAddress(), userdata.ipport.port)
         global_password = userdata.global_password
         byte_global_password = userdata.byte_global_password
@@ -91,12 +95,65 @@ class ApplicationInstance private constructor() {
 
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
-    val PendingResultArray=DataList()
-    val isCapturingMode: Boolean=false
+    val PendingResultArray = DataList()
+    val isCapturingMode: Boolean = false
+    val pendingtaskertask = PendingTaskerTask()
 
 }
 
-fun getDeviceIpAddress():String{
+class PendingTaskerTask {
+    private var arrayTaskerPendings: ArrayList<MessageTimeObject> = ArrayList()
+    private val lock = Any()
+    fun addPending(message: MyMessage) {
+        synchronized(lock) {
+            arrayTaskerPendings.add(MessageTimeObject(message, System.currentTimeMillis()))
+        }
+    }
+
+    fun isvalid(editActivity: EditActivityEventValues): Boolean? {
+        synchronized(lock) {
+            popexpiredObject()
+            val i = arrayTaskerPendings.iterator()
+            while (i.hasNext()) {
+                val mymessage = i.next() // must be called before you can call i.remove()
+                // Do something
+                var type = TYPE_MESSAGE
+                if (editActivity.isResponse) {
+                    type = TYPE_RESPOSNE
+                }
+                if (mymessage.message.mtype == type &&
+                    (mymessage.message.tag == editActivity.TAG || editActivity.TAG == null || editActivity.TAG.equals("")) &&
+                    (mymessage.message.message == editActivity.MSG || editActivity.MSG == null || editActivity.MSG.equals(
+                        ""
+                    ))
+                ) {
+                    i.remove()
+                    return true
+                }
+            }//end of while
+            return false
+        }
+    }
+
+    val EXPIRETIME = 1 * 60 * 1000//1minute
+
+    private fun popexpiredObject() {
+
+        val i = arrayTaskerPendings.iterator()
+        while (i.hasNext()) {
+            val mymessage = i.next() // must be called before you can call i.remove()
+            // Do something
+            if ((System.currentTimeMillis() - EXPIRETIME)>mymessage.milli) {
+                i.remove()
+            }
+        }//end of while
+    }
+}
+
+class MessageTimeObject(val message: MyMessage, val milli: Long)
+
+
+fun getDeviceIpAddress(): String {
     try {
         val enumeration = NetworkInterface
             .getNetworkInterfaces()
@@ -117,5 +174,5 @@ fun getDeviceIpAddress():String{
         e.stackTrace
 
     }
-    return  LOCAL_IP
+    return LOCAL_IP
 }
