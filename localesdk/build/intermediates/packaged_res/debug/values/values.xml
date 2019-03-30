@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <string name="com_twofortyfouram_locale_sdk_client_app_store_deep_link_format" ns1:ignore="UnusedResources" translatable="false">market://details?id=%1$s&amp;referrer=utm_source=%2$s&amp;utm_medium=app&amp;utm_campaign=plugin</string>
+    <string name="com_twofortyfouram_log_tag" ns1:ignore="ResourceName"/>
+</resources>

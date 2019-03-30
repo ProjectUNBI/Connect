@@ -13,6 +13,7 @@ import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
 import com.unbi.connect.messaging.MyMessage
+import com.unbi.connect.util_classes.CustomActivityProcessor
 
 
 class TCPservice : BaseService(), Listener, Logger {
@@ -101,7 +102,24 @@ class TCPservice : BaseService(), Listener, Logger {
     }
 
     override fun ActionComplete(message: MyMessage) {
-        //todo trigge the valid mesaage to do taskes
+        if(ApplicationInstance.instance.isCapturingMode){
+            //todo capture the message and shoew to custom Activity
+            return
+        }
+        if(Userdata.instance.iscustomactivity){
+            val customActivityProcessor=CustomActivityProcessor(message)
+            if(customActivityProcessor.isTriggered){
+                customActivityProcessor.performIt()
+                return
+            }
+        }else{
+            //todo trigge the valid mesaage to do taskes
+
+
+        }
+
+
+
     }
 
     override fun show(int: Int, msg: String) {

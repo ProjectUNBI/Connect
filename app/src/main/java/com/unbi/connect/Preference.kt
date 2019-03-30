@@ -92,6 +92,7 @@ class ApplicationInstance private constructor() {
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
     val PendingResultArray=DataList()
+    val isCapturingMode: Boolean=false
 
 }
 

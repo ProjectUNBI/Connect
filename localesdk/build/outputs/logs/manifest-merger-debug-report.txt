@@ -1,0 +1,43 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+	package
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:3:11-57
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:2:11-57
+	android:versionCode
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:1-10:12
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:1:11-69
+uses-sdk
+ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+	tools:overrideLibrary
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:15-270
+	android:targetSdkVersion
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:6:5-272
+		INJECTED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml
+application
+ADDED from C:\Users\Glu\Desktop\Connect\localesdk\src\main\AndroidManifest.xml:8:5-20

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.twofortyfouram.locale.sdk.client"
+    android:versionCode="6"
+    android:versionName="4.0.3" > <!-- Ignore appcompat compatibility requirements. -->
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="28"
+        tools:overrideLibrary="android.support.v4,android.support.v7.appcompat,android.support.graphics.drawable,android.support.mediacompat,android.support.fragment,android.support.fragment,android.support.coreui,android.support.coreutils,android.support.compat" />
+
+    <application />
+
+</manifest>
