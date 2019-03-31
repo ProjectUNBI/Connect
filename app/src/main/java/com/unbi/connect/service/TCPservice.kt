@@ -15,6 +15,10 @@ import java.net.Socket
 import com.unbi.connect.messaging.MyMessage
 import com.unbi.connect.plugin.event.EventEditActivity
 import com.unbi.connect.util_classes.CustomActivityProcessor
+import com.unbi.connect.TaskerPlugin
+import android.support.v4.app.NotificationCompat.getExtras
+
+
 
 
 class TCPservice : BaseService(), Listener, Logger {
@@ -127,6 +131,7 @@ class TCPservice : BaseService(), Listener, Logger {
             TODO("SENT AS INTENT")
             return
         }
+
         ApplicationInstance.instance.pendingtaskertask.addPending(message)
         TaskerPlugin.Event.addPassThroughMessageID(INTENT_REQUEST_REQUERY)
         applicationContext.sendBroadcast(INTENT_REQUEST_REQUERY)

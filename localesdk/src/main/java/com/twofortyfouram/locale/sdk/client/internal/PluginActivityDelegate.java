@@ -90,7 +90,7 @@ public final class PluginActivityDelegate<T extends Activity & IPluginActivity> 
 
                     if (!BundleComparer.areBundlesEqual(resultBundle, activity.getPreviousBundle())
                             || !blurb.equals(activity.getPreviousBlurb())) {
-                        final Intent resultIntent = new Intent();
+                        final Intent resultIntent = activity.getResultIntent();
                         resultIntent.putExtra(com.twofortyfouram.locale.api.Intent.EXTRA_BUNDLE,
                                 resultBundle);
                         resultIntent.putExtra(
@@ -103,6 +103,7 @@ public final class PluginActivityDelegate<T extends Activity & IPluginActivity> 
             }
         }
     }
+
 
     @Nullable
     public final String getPreviousBlurb(@NonNull final T activity) {

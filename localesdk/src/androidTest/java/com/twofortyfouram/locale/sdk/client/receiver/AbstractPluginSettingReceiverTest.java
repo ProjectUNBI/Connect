@@ -189,7 +189,7 @@ public final class AbstractPluginSettingReceiverTest extends AndroidTestCase {
         }
 
         @Override
-        protected void firePluginSetting(final Context context, final Bundle bundle) {
+        protected void firePluginSetting(final Context context, final Bundle bundle, Intent intent) {
             mFireCount.incrementAndGet();
             mFireBundle.set(bundle);
         }

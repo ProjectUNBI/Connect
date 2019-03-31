@@ -35,7 +35,7 @@
     <string name="is_response_type">This is a response</string>
     <string name="message">Message</string>
     <string name="put_long_message">Put message here</string>
-    <string name="put_your_task_uuid">Your task uuid(as variable)</string>
+    <string name="put_your_task_uuid">will add uuidToCheck(so add %idtoadd)</string>
     <string name="message_id">Message ID</string>
     <string name="messagesalt">Salt to Add</string>
     <string name="salttocheck">Salt as variable</string>
@@ -56,4 +56,5 @@
     <string name="taskname_hint">Task name</string>
     <string name="is_response_type_event">Response</string>
     <string name="is_message_type_event">Message</string>
+    <string name="optional_msg_uuid">Msg UUID (optional)</string>
 </resources>

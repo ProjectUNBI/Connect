@@ -1,22 +1,31 @@
 package com.unbi.connect.plugin.task
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
+import com.google.gson.Gson
 import com.twofortyfouram.locale.sdk.client.ui.activity.AbstractAppCompatPluginActivity
 import com.twofortyfouram.log.Lumberjack
 import com.unbi.connect.R
+import com.unbi.connect.TaskerPlugin
 import com.unbi.connect.bind
+import com.unbi.connect.plugin.task.TaskBundleValues.BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS
+import com.unbi.connect.plugin.task.TaskBundleValues.BUNDLE_EXTRA_STRING_MSG
+import com.unbi.connect.plugin.task.TaskBundleValues.BUNDLE_EXTRA_STRING_TAG
+import com.unbi.connect.plugin.task.TaskBundleValues.BUNDLE_EXTRA_STRING_TASK_NAME
 import java.util.regex.Pattern
 
 
 class TaskEditActivity : AbstractAppCompatPluginActivity() {
+
 
     private val radio_message: RadioButton by bind(R.id.radio_it_is_message)
     private val radio_response: RadioButton by bind(R.id.radio_it_is_response)
@@ -29,14 +38,14 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
     private val edit_MSG: EditText by bind(R.id.editplugin_message)
     private val lay_linear_response: LinearLayout by bind(R.id.layout_response)
     private val edit_ID_MSG: EditText by bind(R.id.editplugin_message_id)
-    private val edit_SALT_MSG: EditText by bind(R.id.editplugin_message_salt)
+    //    private val edit_SALT_MSG: EditText by bind(R.id.editplugin_message_salt)
     private val edit_TASK_NAME: EditText by bind(R.id.editplugin_taskname)
     private val but_plus: Button by bind(R.id.but_plus_sign)
     private val but_minus: Button by bind(R.id.but_minus_sign)
     private val lay_linear_extra: LinearLayout by bind(R.id.layout_extra_view)
     private val extras_views: ArrayList<View> = ArrayList()
 
-    var key_counter=0
+    var key_counter = 0
     val clicklistener: View.OnClickListener = View.OnClickListener {
         when (it.id) {
             R.id.but_plus_sign -> {
@@ -84,11 +93,13 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
 
     }
 
+    private val LOG_TAG: String = "TaskEditActivity"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.plugin_edit_task)
         but_plus.setOnClickListener(clicklistener)
-        but_minus.setOnClickListener (clicklistener)
+        but_minus.setOnClickListener(clicklistener)
         radio_message.setOnCheckedChangeListener(checklistener)
         radio_response.setOnCheckedChangeListener(checklistener)
         lay_linear_message.visibility = VISIBLE
@@ -100,8 +111,11 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
         var callingApplicationLabel: CharSequence? = null
         try {
             callingApplicationLabel = packageManager.getApplicationLabel(
-                    packageManager.getApplicationInfo(callingPackage,
-                            0))
+                packageManager.getApplicationInfo(
+                    callingPackage,
+                    0
+                )
+            )
         } catch (e: PackageManager.NameNotFoundException) {
             Lumberjack.e("Calling package couldn't be found%s", e) //$NON-NLS-1$
         }
@@ -113,6 +127,11 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
         supportActionBar?.setSubtitle(R.string.plugin_name)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if (TaskerPlugin.hostSupportsRelevantVariables(getIntent().getExtras())) {
+            val passedNames = TaskerPlugin.getRelevantVariableList(getIntent().getExtras())
+            Log.d(LOG_TAG, Gson().toJson(passedNames))
+//            TODO("variable should add here")
+        }
     }
 
 
@@ -136,7 +155,7 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
         edit_TAG.setText(prevalue.TAG)
         edit_MSG.setText(prevalue.MSG)
         edit_ID_MSG.setText(prevalue.ID_MSG)
-        edit_SALT_MSG.setText(prevalue.SALT_MSG)
+//        edit_SALT_MSG.setText(prevalue.SALT_MSG)
         edit_TASK_NAME.setText(prevalue.TASKNAME)
 
         val hashextra = prevalue.extraarray
@@ -158,24 +177,35 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
         var result: Bundle? = null
 
         if (!TextUtils.isEmpty(edit_ip.text.toString()) &&
-                !TextUtils.isEmpty(edit_port.text.toString())
+            !TextUtils.isEmpty(edit_port.text.toString())
         ) {
             val values = EditActivityTaskValues(
-                    radio_response.isChecked,
-                    checkbox_isSuccess.isChecked,
-                    checkbox_intent.isChecked,
-                    getipadress(),
-                    edit_TAG.text.toString(),
-                    edit_MSG.text.toString(),
-                    edit_ID_MSG.text.toString(),
-                    edit_SALT_MSG.text.toString(),
-                    getextras(),
-                    edit_TASK_NAME.text.toString()
+                radio_response.isChecked,
+                checkbox_isSuccess.isChecked,
+                checkbox_intent.isChecked,
+                getipadress(),
+                edit_TAG.text.toString(),
+                edit_MSG.text.toString(),
+                edit_ID_MSG.text.toString(),
+//                edit_SALT_MSG.text.toString(),
+                getextras(),
+                edit_TASK_NAME.text.toString()
 
             )
             result = TaskBundleValues.generateBundle(applicationContext, values)
         }
+        if (TaskerPlugin.Setting.hostSupportsOnFireVariableReplacement(this)) {
+            TaskerPlugin.Setting
+                .setVariableReplaceKeys(
+                    result, arrayOf(
+                        BUNDLE_EXTRA_STRING_TAG,
+                        BUNDLE_EXTRA_STRING_MSG,
+                        BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS,
+                        BUNDLE_EXTRA_STRING_TASK_NAME
 
+                    ) /* String [] { "com.sample.plugin.MYVALUE" } */
+                );
+        }
         return result
 
 
@@ -192,15 +222,17 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
             builder.append("Type: Response\n")
             builder.append("Intent: ${data.isIntent}\n")
             builder.append("Success: ${data.isSuccess}\n")
-            builder.append("Id: ${data.ID_MSG}\n")
-            builder.append("Salt: ${data.SALT_MSG}\n")
+//            builder.append("Salt: ${data.SALT_MSG}\n")
         } else {
             builder.append("Type: Message\n")
             builder.append("Tag: ${data.TAG}\n")
             builder.append("Message: ${data.MSG}\n")
         }
-        var i=0
-        for((key,value) in data.extraarray){
+        if(data.ID_MSG!=null&&!data.ID_MSG.isEmpty()){
+            builder.append("Id: ${data.ID_MSG}\n")
+        }
+        var i = 0
+        for ((key, value) in data.extraarray) {
             i++
             builder.append("Key${i}: $key\n")
             builder.append("Value${i}: $value\n")
@@ -216,8 +248,8 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
             val valueText = view.findViewById<EditText>(R.id.edit_extra_value)
             if (!TextUtils.isEmpty(keytext.text.toString())) {
                 hashMap.put(
-                        keytext.text.toString(),
-                        valueText.text.toString()
+                    keytext.text.toString(),
+                    valueText.text.toString()
                 )
             }
         }
@@ -226,16 +258,18 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
 
     private fun getipadress(): String? {
         val ipport = edit_ip.text.toString() + ":" + edit_port.text.toString()
-        val p = Pattern.compile("^("
+        val p = Pattern.compile(
+            "^("
 //                + "(((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}" // Domain name
 //                + "|"
-                + "localhost" // localhost
+                    + "localhost" // localhost
 
-                + "|"
-                + "(([0-9]{1,3}\\.){3})[0-9]{1,3})" // Ip
+                    + "|"
+                    + "(([0-9]{1,3}\\.){3})[0-9]{1,3})" // Ip
 
-                + ":"
-                + "[0-9]{1,5}$")
+                    + ":"
+                    + "[0-9]{1,5}$"
+        )
         if (p.matcher(ipport).matches()) {
             return ipport
         }
@@ -256,10 +290,23 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
         }
         return "";
     }
+
+    override fun getResultIntent(): Intent {
+        val intent = Intent()
+        if (TaskerPlugin.hostSupportsRelevantVariables(getIntent().getExtras()))
+            TaskerPlugin.addRelevantVariableList(
+                intent, arrayOf(
+                    "%msgid\nMessage ID\nThe id of <B>this message</B>. Store it if you want to use it latter when a \"Response\" type message recieved"
+                )
+            );
+        if (  TaskerPlugin.Setting.hostSupportsSynchronousExecution( getIntent().getExtras() ) )
+            TaskerPlugin.Setting.requestTimeoutMS( intent, 10000 );
+        return intent
+
+    }
+
 }
-
-
-class EditActivityTaskValues(
+    class EditActivityTaskValues(
         val isResponse: Boolean = false,
         val isSuccess: Boolean = true,
         val isIntent: Boolean = false,
@@ -267,7 +314,7 @@ class EditActivityTaskValues(
         val TAG: String? = null,
         val MSG: String? = null,
         val ID_MSG: String? = null,
-        val SALT_MSG: String? = null,
+        /*  val SALT_MSG: String? = null,*/
         val extraarray: HashMap<String, String>,
-        val TASKNAME:String?
-)
+        val TASKNAME: String?
+    )

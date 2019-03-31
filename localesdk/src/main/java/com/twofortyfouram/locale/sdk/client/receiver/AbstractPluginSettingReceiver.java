@@ -44,7 +44,7 @@ import com.twofortyfouram.spackle.bundle.BundleScrubber;
  * <li>{@link #isAsync()} is called to determine whether the remaining work should be performed on
  * a
  * background thread.</li>
- * <li>{@link #firePluginSetting(android.content.Context, android.os.Bundle)} is called to trigger
+ * <li>{@link #firePluginSetting(Context, Bundle, Intent)} is called to trigger
  * the plug-in setting's action.</li>
  * </ol>
  * <p>
@@ -125,7 +125,7 @@ public abstract class AbstractPluginSettingReceiver extends AbstractAsyncReceive
 
                 @Override
                 public int runAsync() {
-                    firePluginSetting(mContext, mBundle);
+                    firePluginSetting(mContext, mBundle,intent);
                     return Activity.RESULT_OK;
                 }
 
@@ -133,8 +133,9 @@ public abstract class AbstractPluginSettingReceiver extends AbstractAsyncReceive
 
             goAsyncWithCallback(callback, isOrderedBroadcast());
         } else {
-            firePluginSetting(context, bundle);
+            firePluginSetting(context, bundle,intent);
         }
+
     }
 
     /**
@@ -155,7 +156,7 @@ public abstract class AbstractPluginSettingReceiver extends AbstractAsyncReceive
     /**
      * Configures the receiver whether it should process the Intent in a
      * background thread. Plug-ins should return true if their
-     * {@link #firePluginSetting(android.content.Context, android.os.Bundle)} method performs any
+     * {@link #firePluginSetting(Context, Bundle, Intent)} method performs any
      * sort of disk IO (ContentProvider query, reading SharedPreferences, etc.).
      * or other work that may be slow.
      * <p>
@@ -175,11 +176,10 @@ public abstract class AbstractPluginSettingReceiver extends AbstractAsyncReceive
      * be called on the main thread. Regardless of which thread this method is
      * called on, this method MUST return within 10 seconds per the requirements
      * for BroadcastReceivers.
-     *
-     * @param context BroadcastReceiver context.
+     *  @param context BroadcastReceiver context.
      * @param bundle  The plug-in's Bundle previously returned by the edit
-     *                Activity.
+     * @param intent
      */
     protected abstract void firePluginSetting(@NonNull final Context context,
-            @NonNull final Bundle bundle);
+                                              @NonNull final Bundle bundle, Intent intent);
 }

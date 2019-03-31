@@ -1,5 +1,6 @@
 package com.twofortyfouram.locale.sdk.client.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -70,5 +71,17 @@ public interface IPluginActivity {
      */
     @NonNull
     String getResultBlurb(@NonNull final Bundle bundle);
-
+    /**
+     * @return new Intent for {@code resultIntent}.
+     *  you can assign variable names
+     *  if ( TaskerPlugin.hostSupportsRelevantVariables( getIntent().getExtras() ) )
+     *       TaskerPlugin.addRelevantVariableList( resultIntent, new String [] {
+     *          "%pcolour\nPet Colour\nThe colour of the pet <B>last bought</B>"
+     *       } );
+     *
+     *       here resultIntent is the new intent
+     *
+     *
+     */
+    Intent getResultIntent();
 }

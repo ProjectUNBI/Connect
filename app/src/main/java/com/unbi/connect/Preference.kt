@@ -110,7 +110,7 @@ class PendingTaskerTask {
         }
     }
 
-    fun isvalid(editActivity: EditActivityEventValues): Boolean? {
+    fun isvalid(editActivity: EditActivityEventValues): Pair<Boolean, MyMessage?> {
         synchronized(lock) {
             popexpiredObject()
             val i = arrayTaskerPendings.iterator()
@@ -128,10 +128,10 @@ class PendingTaskerTask {
                     ))
                 ) {
                     i.remove()
-                    return true
+                    return Pair(true,mymessage.message)
                 }
             }//end of while
-            return false
+            return Pair(false,null)
         }
     }
 
@@ -149,6 +149,7 @@ class PendingTaskerTask {
         }//end of while
     }
 }
+
 
 class MessageTimeObject(val message: MyMessage, val milli: Long)
 

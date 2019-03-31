@@ -27,7 +27,7 @@ object EventBundleValues {
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_TAG, true, true)
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MSG, true, true)
             BundleAssertions.assertHasBoolean(bundle, BUNDLE_EXTRA_BOOLEAN_RESPONSE)
-            BundleAssertions.assertKeyCount(bundle, 4)//todo keep eye on it
+//            BundleAssertions.assertKeyCount(bundle, 4)//todo keep eye on it
         } catch (e: AssertionError) {
             Lumberjack.e("Bundle failed verification%s", e) //$NON-NLS-1$
             return false

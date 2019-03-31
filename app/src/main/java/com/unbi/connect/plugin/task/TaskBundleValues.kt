@@ -18,7 +18,7 @@ object TaskBundleValues {
     val BUNDLE_EXTRA_STRING_MSG = "com.unbi.connect.STRING_MSG" //$NON-NLS-1$
     val BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS = "com.unbi.connect.STRING_GSON_ARRAY_EXTRAS" //$NON-NLS-1$
     val BUNDLE_EXTRA_STRING_MSG_UUID = "com.unbi.connect.STRING_MSG_UUID" //$NON-NLS-1$
-    val BUNDLE_EXTRA_STRING_MSG_SALT = "com.unbi.connect.STRING_MSG_SALT" //$NON-NLS-1$
+//    val BUNDLE_EXTRA_STRING_MSG_SALT = "com.unbi.connect.STRING_MSG_SALT" //$NON-NLS-1$
     val BUNDLE_EXTRA_BOOLEAN_RESPONSE = "com.unbi.connect.BOOLEAN_RESPONSE" //$NON-NLS-1$
     val BUNDLE_EXTRA_BOOLEAN_INTENT = "com.unbi.connect.BOOLEAN_INTENT" //$NON-NLS-1$
     val BUNDLE_EXTRA_BOOLEAN_IS_SUCCESS_RESPONSE = "com.unbi.connect.BOOLEAN_IS_SUCCESS_RESPONSE" //$NON-NLS-1$
@@ -36,12 +36,12 @@ object TaskBundleValues {
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MSG, true, true)
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS, true, true)
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MSG_UUID, true, true)
-            BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MSG_SALT, true, true)
+//            BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_MSG_SALT, true, true)
             BundleAssertions.assertHasString(bundle, BUNDLE_EXTRA_STRING_TASK_NAME, true, true)
             BundleAssertions.assertHasBoolean(bundle, BUNDLE_EXTRA_BOOLEAN_RESPONSE)
             BundleAssertions.assertHasBoolean(bundle, BUNDLE_EXTRA_BOOLEAN_INTENT)
             BundleAssertions.assertHasBoolean(bundle, BUNDLE_EXTRA_BOOLEAN_IS_SUCCESS_RESPONSE)
-            BundleAssertions.assertKeyCount(bundle, 11)//todo keep eye on it
+//            BundleAssertions.assertKeyCount(bundle, 11)//todo keep eye on it
         } catch (e: AssertionError) {
             Lumberjack.e("Bundle failed verification%s", e) //$NON-NLS-1$
             return false
@@ -59,7 +59,7 @@ object TaskBundleValues {
                 bundle.getString(BUNDLE_EXTRA_STRING_TAG, null),
                 bundle.getString(BUNDLE_EXTRA_STRING_MSG, null),
                 bundle.getString(BUNDLE_EXTRA_STRING_MSG_UUID, null),
-                bundle.getString(BUNDLE_EXTRA_STRING_MSG_SALT, null),
+               /* bundle.getString(BUNDLE_EXTRA_STRING_MSG_SALT, null),*/
                 getHashmap(bundle.getString(BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS, null)),
                 bundle.getString(BUNDLE_EXTRA_STRING_TASK_NAME, null)
         )
@@ -74,7 +74,7 @@ object TaskBundleValues {
         result.putString(BUNDLE_EXTRA_STRING_TAG, values.TAG)
         result.putString(BUNDLE_EXTRA_STRING_MSG, values.MSG)
         result.putString(BUNDLE_EXTRA_STRING_MSG_UUID, values.ID_MSG)
-        result.putString(BUNDLE_EXTRA_STRING_MSG_SALT, values.SALT_MSG)
+//        result.putString(BUNDLE_EXTRA_STRING_MSG_SALT, values.SALT_MSG)
         result.putString(BUNDLE_EXTRA_STRING_TASK_NAME, values.TASKNAME)
         result.putString(BUNDLE_EXTRA_STRING_GSON_ARRAY_EXTRAS, Gson().toJson(values.extraarray))
         result.putBoolean(BUNDLE_EXTRA_BOOLEAN_RESPONSE, values.isResponse)
