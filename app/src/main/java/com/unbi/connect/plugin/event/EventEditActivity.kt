@@ -99,8 +99,8 @@ class EventEditActivity : AbstractAppCompatPluginActivity() {
         if (TaskerPlugin.hostSupportsRelevantVariables(getIntent().getExtras()))
             TaskerPlugin.addRelevantVariableList(
                 intent, arrayOf(
-                    "%type\nType\nType of the message. <br/><B>INIT</B>=0, <br/><B>RESPOSNE</B>=1, <br/><B>MESSAGE</B>=2",
-                    "%result\nResult\nAvailable when type of messge is of <B>RESPONSE</B> type. <br/><B>SUCCESS</B>=1, <br/><B>FAILURE</B>=-1",
+                    "%type\nType\nType of the message.",//<br/><B>INIT</B>=0, <br/><B>RESPOSNE</B>=1, <br/><B>MESSAGE</B>=2,
+                    "%result\nResult\nAvailable when type of messge is of <B>response</B> type.",//<br/><B>SUCCESS</B>=1, <br/><B>FAILURE</B>=-1",
                     "%tag\nTAG\nAvailable when type of messge is of <B>MESSAGE</B> type.",
                     "%message\nMessage\nThe content of the message",
                     "%taskname\nTask Name\nThe task name if it is set by the sender",

@@ -128,7 +128,14 @@ class TCPservice : BaseService(), Listener, Logger {
         }
         //todo trigge the valid mesaage to do taskes
         if (message.isIntent) {
-            TODO("SENT AS INTENT")
+//            TODO("SENT AS INTENT")
+            if(message.tag==null){
+                return
+            }
+            val intent=Intent()
+            intent.setAction(message.tag)
+            prepairemessageforIntent(intent,message)
+            sendBroadcast(intent)
             return
         }
 
@@ -140,10 +147,49 @@ class TCPservice : BaseService(), Listener, Logger {
 
     }
 
+
+
     override fun show(int: Int, msg: String) {
         return
         TODO("Todo to update the Looger view")
     }
 
+    private fun prepairemessageforIntent(intent: Intent, myMessage: MyMessage) {
+        if (myMessage.mtype == TYPE_INIT) {
+            intent.putExtra("type", "init")
+        }
+        if (myMessage.mtype == TYPE_RESPOSNE) {
+            intent.putExtra("type", "response")
+            if (myMessage.resultCode == RESULT_SUCCESS) {
+                intent.putExtra("result", "success")
+            }
+            if (myMessage.resultCode == RESULT_FAILURE) {
+                intent.putExtra("result", "fail")
+            }
+            if (myMessage.resultCode == RESULT_UNKNOWN) {
+                intent.putExtra("result", "unknown")
+            }
+        }
+        if (myMessage.mtype == TYPE_MESSAGE) {
+            intent.putExtra("type", "message")
+        }
+        intent.putExtra("tag", myMessage.tag)
+        intent.putExtra("message", myMessage.message)
+        intent.putExtra("taskname", myMessage.taskName)
+        intent.putExtra("senderip", myMessage.sender.ip)
+        intent.putExtra("senderport", myMessage.sender.port.toString())
+        intent.putExtra("msgid", myMessage.uuidToCheck?.uuid)
+        intent.putExtra("msgidtoadd", myMessage.uuidToadd?.uuid)
+
+        val extra = myMessage.extra?.hash ?: return
+        for ((key, value) in extra) {
+            var temp = key.replace("%", "")
+            temp = key.replace(" ", "")
+            if (temp.isNotEmpty()) {
+                intent.putExtra(temp, value)
+            }
+        }
+
+    }
 }
 
