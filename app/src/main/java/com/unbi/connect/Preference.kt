@@ -17,7 +17,8 @@ import kotlin.collections.ArrayList
 //never use "object" it is a trap... it will not work with Gson
 class Userdata private constructor() {
     companion object {
-        val instance = Userdata()
+//        val instance = Userdata()
+        var instance = Userdata()
     }
 
     val MY_PREFS_NAME: String = "com.unbi.connect.preferenece.Userdata"
@@ -82,16 +83,23 @@ class Userdata private constructor() {
         if (data == null) {
             return
         }
-        //copying variable valuer
-        isToast = data.isToast
-        ipport = IpPort(getDeviceIpAddress(), data.ipport.port)
-        global_password = data.global_password
-        byte_global_password = data.byte_global_password
-        iscustomactivity = data.iscustomactivity
-        islogview_enable = data.islogview_enable
-        Trig_copytext= data.Trig_copytext
-        Trig_sendclip= data.Trig_sendclip
-        Trig_findphone= data.Trig_findphone
+        /**
+         * copying variable value
+         *
+         */
+//        isToast = data.isToast
+//        ipport = IpPort(getDeviceIpAddress(), data.ipport.port)
+//        global_password = data.global_password
+//        byte_global_password = data.byte_global_password
+//        iscustomactivity = data.iscustomactivity
+//        islogview_enable = data.islogview_enable
+//        Trig_copytext= data.Trig_copytext
+//        Trig_sendclip= data.Trig_sendclip
+//        Trig_findphone= data.Trig_findphone
+        /**
+         * end of copying vaiable
+         */
+        Userdata.instance=data
 
     }
 
