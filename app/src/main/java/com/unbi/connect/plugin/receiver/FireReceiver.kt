@@ -68,27 +68,29 @@ class FireReceiver : AbstractPluginSettingReceiver() {
             resultval
 
         )
-        PendingMessage(
-            pendingmsg,
-            System.currentTimeMillis()
-        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
-        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
+        pendingmsg.secureAndSend(IpPort.generate(taskValue.receiver),null,null)
 
-
-        val message = MyMessage(
-            salt_toadd,
-            null,
-            Userdata.instance.ipport,
-            null,
-            null,
-            null,
-            false,
-            TYPE_INIT,//message is init mtype
-            uidtoadd,
-            null,
-            null
-        )
-        message.sendAsync(IpPort.generate(taskValue.receiver), null, null)
+//        PendingMessage(
+//            pendingmsg,
+//            System.currentTimeMillis()
+//        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
+//        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
+//
+//
+//        val message = MyMessage(
+//            salt_toadd,
+//            null,
+//            Userdata.instance.ipport,
+//            null,
+//            null,
+//            null,
+//            false,
+//            TYPE_INIT,//message is init mtype
+//            uidtoadd,
+//            null,
+//            null
+//        )
+//        message.sendAsync(IpPort.generate(taskValue.receiver), null, null)
 //        message.sendAsync(IpPort.generate(taskValue.receiver),nul, null)
 
 

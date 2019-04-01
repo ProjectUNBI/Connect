@@ -37,6 +37,7 @@ class MyMessage(
         async.execute(this)
     }
 
+    @Deprecated("Call it only in Async task", ReplaceWith("Use sendAsync() if you call it from a UI thread"))
     fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?) {
 
         val stringTosend = this.getEncryptedMsg()
@@ -75,10 +76,36 @@ class MyMessage(
         } catch (e: Exception) {
             logger?.show(LOG_TYPE_ERROR, e.message.toString())
             toaster?.show(e.message)
-            Log.e(MyMessage::class.java.simpleName, e.message)
+            Log.e(MyMessage::class.java.simpleName, e.message.toString())
         }
         logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: " + this.sender.ip + ":" + this.sender.port)
         toaster?.show("success")
+    }
+
+    fun secureAndSend(ipport: IpPort?,toaster: Toaster?,logger: Logger?){
+
+        PendingMessage(
+                this,
+                System.currentTimeMillis()
+        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
+        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
+        val message = MyMessage(
+                salt_toadd,
+                null,
+                Userdata.instance.ipport,
+                null,
+                null,
+                null,
+                false,
+                TYPE_INIT,//message is init mtype
+                this.uuidToadd,
+                null,
+                null
+        )
+        message.sendAsync(ipport, toaster, logger)
+//        message.sendAsync(IpPort.generate(taskValue.receiver),nul, null)
+
+
     }
 
 }
@@ -269,6 +296,10 @@ class IpPort(val ip: String, val port: Int) {
             }
 
         }
+    }
+
+    override fun toString(): String {
+        return ip+":"+port
     }
 }
 

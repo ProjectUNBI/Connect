@@ -8,7 +8,6 @@ import android.widget.*
 import com.google.gson.Gson
 import com.unbi.connect.Userdata
 import com.unbi.connect.bind
-import com.unbi.connect.fragment.FragmentAbout
 import com.unbi.connect.fragment.FragmentCustomActivity
 import com.unbi.connect.fragment.FragmentLogView
 import android.view.inputmethod.InputMethodManager
@@ -37,9 +36,11 @@ class MainActivity : BaseMainActivity() {
     private val clicklistener = View.OnClickListener { view ->
         val id = view.id
         when (id) {
-            R.id.tv_custom_view -> startFragment(FragmentCustomActivity::class)
-            R.id.tv_log_view -> startFragment(FragmentLogView::class)
-            R.id.tv_about -> startFragment(FragmentAbout::class)
+            R.id.tv_custom_view -> {
+                mesagecapurer=startFragment(FragmentCustomActivity::class.java) as FragmentCustomActivity
+            }
+            R.id.tv_log_view -> startFragment(FragmentLogView::class.java)
+//            R.id.tv_about -> startFragment(FragmentAbout::class)
             R.id.but_save -> {
 
                 Userdata.instance.save(applicationContext, R.id.edit_password, edit_password.text.toString())
@@ -69,7 +70,7 @@ class MainActivity : BaseMainActivity() {
     private val switch_custom_activity: Switch by bind(R.id.switch_enable_custom_activity)
     private val tv_custom_activity: TextView by bind(R.id.tv_custom_view)
     private val tv_log: TextView by bind(R.id.tv_log_view)
-    private val tv_about: TextView by bind(R.id.tv_about)
+//    private val tv_about: TextView by bind(R.id.tv_about)
     private val but_save: Button by bind(R.id.but_save)
     private val switch_toast: Switch by bind(R.id.switch_enable_toast)
 
@@ -88,10 +89,13 @@ class MainActivity : BaseMainActivity() {
         edit_password.setOnFocusChangeListener(focusschangelistener)
         tv_custom_activity.setOnClickListener(clicklistener)
         tv_log.setOnClickListener(clicklistener)
-        tv_about.setOnClickListener(clicklistener)
+//        tv_about.setOnClickListener(clicklistener)
         but_save.setOnClickListener(clicklistener)
         edit_port.setText(Userdata.instance.ipport.port.toString())
         edit_password.setText(Userdata.instance.global_password)
+        //frame layout
+        fragmentLay=findViewById(R.id.fragment_main)
+        fragmentLay?.visibility=View.GONE
     }
 
     private val checklistener = CompoundButton.OnCheckedChangeListener { view, isChecked ->
@@ -116,6 +120,10 @@ class MainActivity : BaseMainActivity() {
         edit_password.setFocusableInTouchMode(true)
     }
 
+    override fun onStop() {
+        super.onStop()
+        finish()
+    }
 
 }
 

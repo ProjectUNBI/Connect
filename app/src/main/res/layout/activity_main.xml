@@ -1,217 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:context=".activity.MainActivity">
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:focusableInTouchMode="true"
-            android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_margin="@dimen/smalest_margin_from_wall"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/smalest_margin_from_wall"
                 android:orientation="horizontal">
 
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="left"
                     android:text="@string/text_ip"
-                    android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
                     android:textSize="@dimen/big_bold"
-            />
-            <TextView
+                    android:textStyle="bold" />
+
+                <TextView
                     android:id="@+id/tv_ip_adress"
-                    android:gravity="center|right"
-                    android:layout_marginEnd="@dimen/margin_end"
-                    android:hint="@string/text_ip_adres"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/big_norbig_normal"/>
-        </LinearLayout>
+                    android:layout_marginEnd="@dimen/margin_end"
+                    android:gravity="center|right"
+                    android:hint="@string/text_ip_adres"
+                    android:textSize="@dimen/big_norbig_normal" />
+            </LinearLayout>
 
-        <FrameLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_margin="@dimen/smalest_margin_from_wall"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/smalest_margin_from_wall"
                 android:orientation="horizontal">
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="left"
                     android:text="@string/text_port"
-                    android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/big_bold"/>
-            <EditText
-                    android:id="@+id/edit_port_value"
-                    android:layout_marginEnd="@dimen/margin_end"
-                    android:layout_gravity="right"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:hint="@string/text_port_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/big_norbig_normal"/>
-        </FrameLayout>
+                    android:textSize="@dimen/big_bold"
+                    android:textStyle="bold" />
 
-        <LinearLayout
+                <EditText
+                    android:id="@+id/edit_port_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="@dimen/margin_end"
+                    android:gravity="center"
+                    android:hint="@string/text_port_value"
+                    android:inputType="number"
+                    android:textSize="@dimen/big_norbig_normal" />
+            </FrameLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/smalest_margin_from_wall"
                 android:orientation="horizontal">
 
-            <ImageView
+                <ImageView
                     android:layout_width="@dimen/big_bold"
                     android:layout_height="@dimen/big_bold"
-                    android:src="@drawable/draw_key"/>
+                    android:src="@drawable/draw_key" />
 
-            <EditText
+                <EditText
                     android:id="@+id/edit_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:layout_marginRight="@dimen/margin_end"
                     android:layout_marginLeft="@dimen/margin_end"
+                    android:layout_marginRight="@dimen/margin_end"
                     android:hint="@string/password"
+                    android:inputType="textPassword"
                     android:maxLines="1"
-                    android:textSize="@dimen/big_norbig_normal"/>
+                    android:textSize="@dimen/big_norbig_normal" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
+                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
+                    android:gravity="center|left"
+                    android:text="@string/enable_custom"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/small_bold"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/switch_enable_custom_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:layout_marginEnd="@dimen/margin_end" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
+                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
+                    android:gravity="center|left"
+                    android:text="@string/enable_toast"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/small_bold"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/switch_enable_toast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:layout_marginEnd="@dimen/margin_end" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_custom_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
+                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
+                    android:text="@string/customactivity"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/medium_bold"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/smalest_margin_from_wall"
+                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_log_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
+                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
+                    android:text="@string/logger"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/medium_bold"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <!--<FrameLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_marginStart="@dimen/smalest_margin_from_wall"-->
+            <!--android:layout_marginEnd="@dimen/smalest_margin_from_wall"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tv_about"-->
+            <!--android:layout_marginTop="@dimen/smalest_margin_from_wall"-->
+            <!--android:layout_marginBottom="@dimen/smalest_margin_from_wall"-->
+            <!--android:text="@string/about"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="@color/black"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:textSize="@dimen/medium_bold"/>-->
+            <!--</FrameLayout>-->
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/but_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:layout_margin="@dimen/smalest_margin_from_wall"
+                    android:enabled="false"
+                    android:text="@string/save"
+                    android:textAllCaps="false" />
+            </FrameLayout>
+
+
         </LinearLayout>
 
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/smalest_margin_from_wall"
-                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:id="@+id/fragment_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
-            <TextView
-                    android:layout_gravity="left"
-                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
-                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
-                    android:text="@string/enable_custom"
-                    android:textStyle="bold"
-                    android:gravity="center|left"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/small_bold"/>
-            <Switch
-                    android:id="@+id/switch_enable_custom_activity"
-                    android:layout_gravity="right|center"
-                    android:layout_marginEnd="@dimen/margin_end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
         </FrameLayout>
 
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/smalest_margin_from_wall"
-                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <TextView
-                    android:layout_gravity="left"
-                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
-                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
-                    android:text="@string/enable_toast"
-                    android:textStyle="bold"
-                    android:gravity="center|left"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/small_bold"/>
-            <Switch
-                    android:id="@+id/switch_enable_toast"
-                    android:layout_gravity="right|center"
-                    android:layout_marginEnd="@dimen/margin_end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-        </FrameLayout>
-
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/smalest_margin_from_wall"
-                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <TextView
-                    android:id="@+id/tv_custom_view"
-                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
-                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
-                    android:layout_gravity="left"
-                    android:text="@string/customactivity"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/medium_bold"/>
-        </FrameLayout>
-
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/smalest_margin_from_wall"
-                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <TextView
-                    android:id="@+id/tv_log_view"
-                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
-                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
-                    android:layout_gravity="left"
-                    android:text="@string/logger"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/medium_bold"/>
-        </FrameLayout>
-
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/smalest_margin_from_wall"
-                android:layout_marginEnd="@dimen/smalest_margin_from_wall"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <TextView
-                    android:id="@+id/tv_about"
-                    android:layout_marginTop="@dimen/smalest_margin_from_wall"
-                    android:layout_marginBottom="@dimen/smalest_margin_from_wall"
-                    android:text="@string/about"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/medium_bold"/>
-        </FrameLayout>
-
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            <Button
-                    android:id="@+id/but_save"
-                    android:text="@string/save"
-                    android:enabled="false"
-                    android:textAllCaps="false"
-                    android:layout_margin="@dimen/smalest_margin_from_wall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"/>
-        </FrameLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 
 </ScrollView>

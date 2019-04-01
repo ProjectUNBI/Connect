@@ -16,16 +16,20 @@ import kotlin.reflect.KClass
 
 
 class OngoingNotificationBuilder {
-
-
+    val FLAG_NOTSET: Int = -99
     inline fun <reified T : Service> buildOngoingNotification(
         context: Context,
         kClass: KClass<T>,
         iconId: Int,
         title: String,
-        body: String
+        body: String,
+        isAutoCancel: Boolean = false
+//        ,flag: Int = FLAG_NOTSET
     ): Notification? {
         val notificationIntent = Intent(context, kClass::class.java)
+//        if (flag != FLAG_NOTSET) {
+//            notificationIntent.setFlags(flag)
+//        }
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -37,26 +41,29 @@ class OngoingNotificationBuilder {
             if (manager != null) {
                 manager.createNotificationChannel(chan)
 
-            val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            val notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(iconId)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build()
-            return notification
+                val notificationbuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                    .setOngoing(true)
+                    .setSmallIcon(iconId)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationManager.IMPORTANCE_MIN)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                if (isAutoCancel) {
+                    notificationbuilder.setAutoCancel(true)
+                }
+                return notificationbuilder.build()
             }
 
         } else {
-            val notification = Notification.Builder(context)
+            val notificationbuilder = Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(iconId)
                 .setContentIntent(pendingIntent)
-                .build()
-
-            return notification
+            if (isAutoCancel) {
+                notificationbuilder.setAutoCancel(true)
+            }
+            return notificationbuilder.build()
         }
         return null
     }

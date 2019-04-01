@@ -8,6 +8,9 @@ import com.unbi.connect.service.TCPservice
 class MyBroadCastReciever:BroadcastReceiver(){
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        if(!Userdata.instance.isReadedfromSpref){
+            Userdata.instance.readfromSpref(context)
+        }
 
         val actionId=intent?.action;
         var pusintent:Intent?=null

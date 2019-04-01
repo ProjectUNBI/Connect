@@ -17,8 +17,7 @@ import com.unbi.connect.plugin.event.EventEditActivity
 import com.unbi.connect.util_classes.CustomActivityProcessor
 import com.unbi.connect.TaskerPlugin
 import android.support.v4.app.NotificationCompat.getExtras
-
-
+import com.unbi.connect.activity.ServiceToActivity
 
 
 class TCPservice : BaseService(), Listener, Logger {
@@ -37,7 +36,7 @@ class TCPservice : BaseService(), Listener, Logger {
     var socServer: ServerSocket? = null
     val binder = LocalBinder()
     var notiId: Int = NOTY_ID_NOTSET
-
+    var servicToActivity:ServiceToActivity?=null
     inner class LocalBinder : Binder() {
 
         internal// Return this instance of LocalService so clients can call public methods
@@ -116,13 +115,13 @@ class TCPservice : BaseService(), Listener, Logger {
 
     override fun ActionComplete(message: MyMessage) {
         if (ApplicationInstance.instance.isCapturingMode) {
-            //todo capture the message and shoew to custom Activity
+            servicToActivity?.sendtoActivity(ServiceToActivity.DEFAULT,message)
             return
         }
         if (Userdata.instance.iscustomactivity) {
             val customActivityProcessor = CustomActivityProcessor(message)
             if (customActivityProcessor.isTriggered) {
-                customActivityProcessor.performIt()
+                customActivityProcessor.performIt(applicationContext,toaster,this)
                 return
             }
         }

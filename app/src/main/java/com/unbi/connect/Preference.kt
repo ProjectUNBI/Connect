@@ -23,6 +23,9 @@ class Userdata private constructor() {
     val MY_PREFS_NAME: String = "com.unbi.connect.preferenece.Userdata"
 
     //instance variable
+    var Trig_copytext:String= NULL_WORD
+    var Trig_sendclip:String= NULL_WORD
+    var Trig_findphone:String= NULL_WORD
     var isReadedfromSpref = false//to check from background service in tasker
     var isToast = true
     var ipport: IpPort = IpPort(getDeviceIpAddress(), 6868)
@@ -56,6 +59,11 @@ class Userdata private constructor() {
             R.id.edit_password -> global_password = value as String
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
             R.id.switch_enable_toast -> isToast = value as Boolean
+
+            R.id.cardview_copy_text ->Userdata.instance.Trig_copytext=value as String
+            R.id.cardview_send_clipboard -> Userdata.instance.Trig_sendclip=value as String
+            R.id.cardview_find_phone -> Userdata.instance.Trig_findphone=value as String
+
         }
         if (applicationContext == null) return
         val editor = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).edit()
@@ -70,17 +78,20 @@ class Userdata private constructor() {
         }
         val prefs = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE)
         val pref = prefs.getString(Userdata::class.java.name, null)
-        val userdata = Gson().fromJson(pref, Userdata::class.java)
-        if (userdata == null) {
+        val data = Gson().fromJson(pref, Userdata::class.java)
+        if (data == null) {
             return
         }
         //copying variable valuer
-        isToast = userdata.isToast
-        ipport = IpPort(getDeviceIpAddress(), userdata.ipport.port)
-        global_password = userdata.global_password
-        byte_global_password = userdata.byte_global_password
-        iscustomactivity = userdata.iscustomactivity
-        islogview_enable = userdata.islogview_enable
+        isToast = data.isToast
+        ipport = IpPort(getDeviceIpAddress(), data.ipport.port)
+        global_password = data.global_password
+        byte_global_password = data.byte_global_password
+        iscustomactivity = data.iscustomactivity
+        islogview_enable = data.islogview_enable
+        Trig_copytext= data.Trig_copytext
+        Trig_sendclip= data.Trig_sendclip
+        Trig_findphone= data.Trig_findphone
 
     }
 
@@ -95,9 +106,10 @@ class ApplicationInstance private constructor() {
 
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
-    val PendingResultArray = DataList()
-    val isCapturingMode: Boolean = false
+//    val PendingResultArray = DataList()
+var isCapturingMode: Boolean = false
     val pendingtaskertask = PendingTaskerTask()
+    var isLogging=false
 
 }
 

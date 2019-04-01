@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_margin="10sp"
         android:layout_weight="1">
 
@@ -27,8 +27,16 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/but_log_toggle"
-            android:text="@string/log"
+            android:id="@+id/but_log_toggle_on"
+            android:text="@string/logon"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp" />
+        <Button
+            android:id="@+id/but_log_toggle_off"
+            android:visibility="gone"
+            android:text="@string/logoff"
             android:textAllCaps="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
