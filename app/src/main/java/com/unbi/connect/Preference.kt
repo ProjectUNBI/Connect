@@ -17,16 +17,16 @@ import kotlin.collections.ArrayList
 //never use "object" it is a trap... it will not work with Gson
 class Userdata private constructor() {
     companion object {
-//        val instance = Userdata()
+        //        val instance = Userdata()
         var instance = Userdata()
     }
 
     val MY_PREFS_NAME: String = "com.unbi.connect.preferenece.Userdata"
 
     //instance variable
-    var Trig_copytext:String= NULL_WORD
-    var Trig_sendclip:String= NULL_WORD
-    var Trig_findphone:String= NULL_WORD
+    var Trig_copytext: String = NULL_WORD
+    var Trig_sendclip: String = NULL_WORD
+    var Trig_findphone: String = NULL_WORD
     var isReadedfromSpref = false//to check from background service in tasker
     var isToast = true
     var ipport: IpPort = IpPort(getDeviceIpAddress(), 6868)
@@ -61,9 +61,9 @@ class Userdata private constructor() {
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
             R.id.switch_enable_toast -> isToast = value as Boolean
 
-            R.id.cardview_copy_text ->Userdata.instance.Trig_copytext=value as String
-            R.id.cardview_send_clipboard -> Userdata.instance.Trig_sendclip=value as String
-            R.id.cardview_find_phone -> Userdata.instance.Trig_findphone=value as String
+            R.id.cardview_copy_text -> Userdata.instance.Trig_copytext = value as String
+            R.id.cardview_send_clipboard -> Userdata.instance.Trig_sendclip = value as String
+            R.id.cardview_find_phone -> Userdata.instance.Trig_findphone = value as String
 
         }
         if (applicationContext == null) return
@@ -99,7 +99,7 @@ class Userdata private constructor() {
         /**
          * end of copying vaiable
          */
-        Userdata.instance=data
+        Userdata.instance = data
 
     }
 
@@ -112,12 +112,10 @@ class ApplicationInstance private constructor() {
         val instance = ApplicationInstance()
     }
 
-    val SaltDataArray = DataList()
-    val PendingMessageDataArray = DataList()
-//    val PendingResultArray = DataList()
-var isCapturingMode: Boolean = false
+    var communicator:Communicator?=null
+    var isCapturingMode: Boolean = false
     val pendingtaskertask = PendingTaskerTask()
-    var isLogging=false
+    var isLogging = false
 
 }
 
@@ -142,16 +140,16 @@ class PendingTaskerTask {
                     type = TYPE_RESPOSNE
                 }
                 if (mymessage.message.mtype == type &&
-                    (mymessage.message.tag == editActivity.TAG || editActivity.TAG == null || editActivity.TAG.equals("")) &&
-                    (mymessage.message.message == editActivity.MSG || editActivity.MSG == null || editActivity.MSG.equals(
-                        ""
-                    ))
+                        (mymessage.message.tag == editActivity.TAG || editActivity.TAG == null || editActivity.TAG.equals("")) &&
+                        (mymessage.message.message == editActivity.MSG || editActivity.MSG == null || editActivity.MSG.equals(
+                                ""
+                        ))
                 ) {
                     i.remove()
-                    return Pair(true,mymessage.message)
+                    return Pair(true, mymessage.message)
                 }
             }//end of while
-            return Pair(false,null)
+            return Pair(false, null)
         }
     }
 
@@ -163,7 +161,7 @@ class PendingTaskerTask {
         while (i.hasNext()) {
             val mymessage = i.next() // must be called before you can call i.remove()
             // Do something
-            if ((System.currentTimeMillis() - EXPIRETIME)>mymessage.milli) {
+            if ((System.currentTimeMillis() - EXPIRETIME) > mymessage.milli) {
                 i.remove()
             }
         }//end of while
@@ -177,13 +175,13 @@ class MessageTimeObject(val message: MyMessage, val milli: Long)
 fun getDeviceIpAddress(): String {
     try {
         val enumeration = NetworkInterface
-            .getNetworkInterfaces()
+                .getNetworkInterfaces()
         while (enumeration.hasMoreElements()) {
             val networkInterface = enumeration.nextElement()
             val enumerationIpAddr = networkInterface
-                .getInetAddresses()
+                    .getInetAddresses()
             while (enumerationIpAddr
-                    .hasMoreElements()
+                            .hasMoreElements()
             ) {
                 val inetAddress = enumerationIpAddr.nextElement()
                 if (!inetAddress.isLoopbackAddress() && inetAddress.getAddress().size == 4) {

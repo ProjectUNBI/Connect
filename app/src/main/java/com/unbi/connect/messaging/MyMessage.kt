@@ -26,87 +26,88 @@ class MyMessage(
     val uuidToadd: MsgUUID?,
     val uuidToCheck: MsgUUID?,
     val taskName: String? = null,
-    val resultCode: Int = RESULT_UNKNOWN
+    val resultCode: Int = RESULT_UNKNOWN,
+    val commuType:Int= COMMUTYPE_WIFI
 ) {
     fun getEncryptedMsg(): String? {
         return AES_Util().encrypt(Gson().toJson(this))
     }
 
-    fun sendAsync(ipport: IpPort?, toaster: Toaster?, logger: Logger?) {
-        val async = ClientAsync(ipport, toaster, logger)
-        async.execute(this)
-    }
+//    fun sendAsync(ipport: IpPort?, toaster: Toaster?, logger: Logger?) {
+//        val async = ClientAsync(ipport, toaster, logger)
+//        async.execute(this)
+//    }
 
-    @Deprecated("Call it only in Async task", ReplaceWith("Use sendAsync() if you call it from a UI thread"))
-    fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?) {
+//    @Deprecated("Call it only in Async task", ReplaceWith("Use sendAsync() if you call it from a UI thread"))
+//    fun send(ipPort: IpPort?, toaster: Toaster?, logger: Logger?) {
+//
+//        val stringTosend = this.getEncryptedMsg()
+//
+//        try {
+//            if (ipPort == null) {
+//                logger?.show(LOG_TYPE_ERROR, "Null ip and port")
+//                toaster?.show("Null ip and port")
+//                Log.e(MyMessage::class.java.simpleName, "Null ip and port")
+//                return
+//            }
+//            val serverAddr = InetAddress.getByName(ipPort.ip)
+//            val socket = Socket(serverAddr, ipPort.port)
+//
+//            //made connection, setup the read (in) and write (out)
+//            val out = PrintWriter(BufferedWriter(OutputStreamWriter(socket.getOutputStream())), true)
+//            val input = BufferedReader(InputStreamReader(socket.getInputStream()))
+//
+//            try {
+//                //write a message to the server
+//                out.println(stringTosend)
+//                //read back a message from the server.
+//                val str = input.readLine()
+//                out.flush()
+//            } catch (e: Exception) {
+//                logger?.show(LOG_TYPE_ERROR, e.message.toString())
+//                toaster?.show(e.message)
+//                Log.e(MyMessage::class.java.simpleName, e.message)
+//
+//            } finally {
+//                input.close()
+//                out.close()
+//                socket.close()
+//            }
+//
+//        } catch (e: Exception) {
+//            logger?.show(LOG_TYPE_ERROR, e.message.toString())
+//            toaster?.show(e.message)
+//            Log.e(MyMessage::class.java.simpleName, e.message.toString())
+//        }
+//        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: " + this.sender.ip + ":" + this.sender.port)
+//        toaster?.show("success")
+//    }
 
-        val stringTosend = this.getEncryptedMsg()
-
-        try {
-            if (ipPort == null) {
-                logger?.show(LOG_TYPE_ERROR, "Null ip and port")
-                toaster?.show("Null ip and port")
-                Log.e(MyMessage::class.java.simpleName, "Null ip and port")
-                return
-            }
-            val serverAddr = InetAddress.getByName(ipPort.ip)
-            val socket = Socket(serverAddr, ipPort.port)
-
-            //made connection, setup the read (in) and write (out)
-            val out = PrintWriter(BufferedWriter(OutputStreamWriter(socket.getOutputStream())), true)
-            val input = BufferedReader(InputStreamReader(socket.getInputStream()))
-
-            try {
-                //write a message to the server
-                out.println(stringTosend)
-                //read back a message from the server.
-                val str = input.readLine()
-                out.flush()
-            } catch (e: Exception) {
-                logger?.show(LOG_TYPE_ERROR, e.message.toString())
-                toaster?.show(e.message)
-                Log.e(MyMessage::class.java.simpleName, e.message)
-
-            } finally {
-                input.close()
-                out.close()
-                socket.close()
-            }
-
-        } catch (e: Exception) {
-            logger?.show(LOG_TYPE_ERROR, e.message.toString())
-            toaster?.show(e.message)
-            Log.e(MyMessage::class.java.simpleName, e.message.toString())
-        }
-        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: " + this.sender.ip + ":" + this.sender.port)
-        toaster?.show("success")
-    }
-
-    fun secureAndSend(ipport: IpPort?,toaster: Toaster?,logger: Logger?){
-
-        PendingMessage(
-                this,
-                System.currentTimeMillis()
-        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
-        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
-        val message = MyMessage(
-                salt_toadd,
-                null,
-                Userdata.instance.ipport,
-                null,
-                null,
-                null,
-                false,
-                TYPE_INIT,//message is init mtype
-                this.uuidToadd,
-                null,
-                null
-        )
-        message.sendAsync(ipport, toaster, logger)
-//        message.sendAsync(IpPort.generate(taskValue.receiver),nul, null)
-
-
-    }
+//    fun secureAndSend(ipport: IpPort?,toaster: Toaster?,logger: Logger?){
+//
+//        PendingMessage(
+//                this,
+//                System.currentTimeMillis()
+//        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
+//        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
+//        val message = MyMessage(
+//                salt_toadd,
+//                null,
+//                Userdata.instance.ipport,
+//                null,
+//                null,
+//                null,
+//                false,
+//                TYPE_INIT,//message is init mtype
+//                this.uuidToadd,
+//                null,
+//                null
+//        )
+//        message.sendAsync(ipport, toaster, logger)
+////        message.sendAsync(IpPort.generate(taskValue.receiver),nul, null)
+//
+//
+//    }
 
 }
 

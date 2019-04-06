@@ -20,7 +20,7 @@ import android.support.v4.app.NotificationCompat.getExtras
 import com.unbi.connect.activity.ServiceToActivity
 
 
-class TCPservice : BaseService(), Listener, Logger {
+class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
 
     val INTENT_REQUEST_REQUERY = Intent(
         com.twofortyfouram.locale.api.Intent.ACTION_REQUEST_QUERY
@@ -51,9 +51,12 @@ class TCPservice : BaseService(), Listener, Logger {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if(ApplicationInstance.instance.communicator==null){
+            ApplicationInstance.instance.communicator= Communicator(this,this,this)
+        }
         if (serviceisNotStart) {
             showforeground()
-            var serviceisNotStart: Boolean = false
+            serviceisNotStart= false
         }
         if (intent == null) {
             return START_STICKY
@@ -91,7 +94,7 @@ class TCPservice : BaseService(), Listener, Logger {
                 socServer = Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync(this, this, toaster)
+                    val serverAsyncTask = ServerAsync( this, toaster)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
@@ -113,7 +116,8 @@ class TCPservice : BaseService(), Listener, Logger {
 
     }
 
-    override fun ActionComplete(message: MyMessage) {
+
+    override fun triggered(message: MyMessage) {
         if (ApplicationInstance.instance.isCapturingMode) {
             servicToActivity?.sendtoActivity(ServiceToActivity.DEFAULT,message)
             return
@@ -142,10 +146,7 @@ class TCPservice : BaseService(), Listener, Logger {
         TaskerPlugin.Event.addPassThroughMessageID(INTENT_REQUEST_REQUERY)
         applicationContext.sendBroadcast(INTENT_REQUEST_REQUERY)
         return
-
-
     }
-
 
 
     override fun show(int: Int, msg: String) {
@@ -190,5 +191,10 @@ class TCPservice : BaseService(), Listener, Logger {
         }
 
     }
+
+    override fun send(address: MyAddress, string: String) {
+        TODO("Send the string to the adress")
+    }
+
 }
 

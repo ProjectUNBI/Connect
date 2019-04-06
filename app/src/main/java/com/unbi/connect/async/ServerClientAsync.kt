@@ -8,7 +8,7 @@ import java.net.Socket
 import java.io.*
 import java.net.InetAddress
 
-class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket, Void, MyMessage>() {
+class ServerAsync( val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket, Void, MyMessage>() {
     private val LOGTAG: String = "ServerClientAsync"
     override fun doInBackground(vararg params: Socket?): MyMessage? {
         val socket = params[0]
@@ -32,19 +32,21 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
             val str=br.readLine()// read alll the line
             socket.close();
             issocketclosed=true
-            val msgType=MessageProcessor(str,logger).messageTaskType
-            if (msgType.message == null) {
-                return null
-            }
-            if(msgType.type== TO_NOT_TODO){
-                return null
-            }
-            if(msgType.type== TO_REDIRECT){
-                msgType.message.sendAsync(msgType.thesender,toaster,logger)
-            }
-            if(msgType.type== TO_TRIGGER){
-                return msgType.message
-            }
+//            val msgType=MessageProcessor(str,logger).messageTaskType
+//            if (msgType.message == null) {
+//                return null
+//            }
+//            if(msgType.type== TO_NOT_TODO){
+//                return null
+//            }
+//            if(msgType.type== TO_REDIRECT){
+//                msgType.message.sendAsync(msgType.thesender,toaster,logger)
+//            }
+//            if(msgType.type== TO_TRIGGER){
+//                return msgType.message
+//            }
+            val communicator=ApplicationInstance.instance.communicator
+            communicator.listenMessage(str)
 
 
         } catch (e: IOException) {
@@ -69,7 +71,7 @@ class ServerAsync(val listener: Listener, val logger: Logger, val toaster: Toast
             return// validdating salt to check is not null again.. not need to do it
         }
 
-        if (!ApplicationInstance.instance.SaltDataArray.isValid(message.saltToCheck)) {
+        if (ApplicationInstance.instance.communicator==null||ApplicationInstance.instance.communicator.SaltDataArray.isValid(message.saltToCheck)) {
             logger.show(LOG_TYPE_ERROR, "Invalid Salt and message is not of init mtype")
             Log.d(LOGTAG, "salt is not valid")
             return
@@ -139,5 +141,24 @@ class ClientAsync(val ipPort: IpPort?, val toaster: Toaster?, val logger: Logger
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
