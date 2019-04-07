@@ -30,3 +30,6 @@ val STR_GETCLIP="GETCLIPDATA"
 val COMMUTYPE_WIFI=1
 val COMMUTYPE_BLUETOOTH=2//if we add bluetooth feature
 
+val TCPSERVICE_RESTART="restart_TCPservice"
+val TCP_SERVICE_EXTRA="com.unbi.connect.service.TCPservice"
+

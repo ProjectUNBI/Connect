@@ -17,9 +17,7 @@ class FireReceiver : AbstractPluginSettingReceiver() {
     }
 
     override fun isAsync(): Boolean {
-//        return true///lets perform Async Task
         return false///lets perform Async Task// dont set true if you want to return something
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
@@ -38,6 +36,10 @@ class FireReceiver : AbstractPluginSettingReceiver() {
         }
         //todo the actual floW:
         //we should add the action to pendng and sould initialize the task with init message
+        /**
+         * Constructing the message
+         */
+
         var tasktype = TYPE_INIT
         if (taskValue.isResponse) {
             tasktype = TYPE_RESPOSNE
@@ -68,31 +70,8 @@ class FireReceiver : AbstractPluginSettingReceiver() {
             resultval
 
         )
-        pendingmsg.secureAndSend(IpPort.generate(taskValue.receiver),null,null)
-
-//        PendingMessage(
-//            pendingmsg,
-//            System.currentTimeMillis()
-//        ).addToPendings(ApplicationInstance.instance.PendingMessageDataArray)
-//        val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(ApplicationInstance.instance.SaltDataArray)
-//
-//
-//        val message = MyMessage(
-//            salt_toadd,
-//            null,
-//            Userdata.instance.ipport,
-//            null,
-//            null,
-//            null,
-//            false,
-//            TYPE_INIT,//message is init mtype
-//            uidtoadd,
-//            null,
-//            null
-//        )
-//        message.sendAsync(IpPort.generate(taskValue.receiver), null, null)
-//        message.sendAsync(IpPort.generate(taskValue.receiver),nul, null)
-
+        val adress= MyAddress(IpPort.generate(taskValue.receiver) as Any, COMMUTYPE_WIFI)//todo change it if we add bluetooth feature
+        ApplicationInstance.instance.communicator?.sendMessage(pendingmsg,adress)
 
         val vars = Bundle()
 
@@ -103,9 +82,7 @@ class FireReceiver : AbstractPluginSettingReceiver() {
                 TaskerPlugin.addVariableBundle(getResultExtras(true), vars)
             }
         }
-        TaskerPlugin.Setting.signalFinish( context, intent, TaskerPlugin.Setting.RESULT_CODE_OK, vars );
-
-
+        TaskerPlugin.Setting.signalFinish( context, intent, TaskerPlugin.Setting.RESULT_CODE_OK, vars )
     }
 
 

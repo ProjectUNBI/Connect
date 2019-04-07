@@ -1,9 +1,8 @@
-package com.unbi.connect
+package com.unbi.connect.messaging
 
-import android.location.Address
 import android.util.Log
 import com.google.gson.Gson
-import com.unbi.connect.messaging.*
+import com.unbi.connect.*
 import com.unbi.connect.util_classes.AES_Util
 
 /**
@@ -40,9 +39,7 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
             logger?.show(LOG_TYPE_ERROR, "Message is null/not valid format")
             return
         }
-        if (msg.tag == null) {
-            return//if there is no message type then just return it
-        }
+
         val sndr = MyAddress(msg.sender, msg.commuType)//grabing the ender Adress
 
         //So message is not null
@@ -129,8 +126,11 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
          * Ok We have handlee all the INIT type message.. so dont pass
          * any INIT type message from here
          */
+        if (msg.tag == null) {
+            return//if there is no message tag then just return it
+        }
         if (!(msg.tag.equals(TYPE_MESSAGE) || msg.tag.equals(TYPE_RESPOSNE))) {
-            //if the message type is not response ore messgetype...return
+            //if the message type is not response or messgetype...return
             return
         }
         /**

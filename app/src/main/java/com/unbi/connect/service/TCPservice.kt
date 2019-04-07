@@ -12,15 +12,15 @@ import com.unbi.connect.uiclasses.OngoingNotificationBuilder
 import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
-import com.unbi.connect.messaging.MyMessage
 import com.unbi.connect.plugin.event.EventEditActivity
 import com.unbi.connect.util_classes.CustomActivityProcessor
 import com.unbi.connect.TaskerPlugin
-import android.support.v4.app.NotificationCompat.getExtras
 import com.unbi.connect.activity.ServiceToActivity
+import com.unbi.connect.async.ClientAsync
+import com.unbi.connect.messaging.*
 
 
-class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
+class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
 
     val INTENT_REQUEST_REQUERY = Intent(
         com.twofortyfouram.locale.api.Intent.ACTION_REQUEST_QUERY
@@ -28,7 +28,6 @@ class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
         com.twofortyfouram.locale.api.Intent.EXTRA_STRING_ACTIVITY_CLASS_NAME,
         EventEditActivity::class.java.getName()
     )
-
     ////////////////
     private val NOTY_ID_NOTSET = -99
     var serviceisNotStart: Boolean = true
@@ -52,8 +51,21 @@ class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(ApplicationInstance.instance.communicator==null){
-            ApplicationInstance.instance.communicator= Communicator(this,this,this)
+            ApplicationInstance.instance.communicator= Communicator(this, this, this)
         }
+        /**
+         * Lets check if the bundle has some exxtra and if this has no extra just leave
+         * if extra then we have to restart the service
+         */
+        val extra_string=intent?.getStringExtra(TCP_SERVICE_EXTRA)
+        if(extra_string.equals(TCPSERVICE_RESTART)){
+            //restart the service
+            restartServer()
+            return START_STICKY
+
+        }
+
+        //////////////
         if (serviceisNotStart) {
             showforeground()
             serviceisNotStart= false
@@ -65,10 +77,7 @@ class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
         if (startedby != null && startedby.equals(MainActivity::class.java.canonicalName)) {
             return START_STICKY//return as it is started from main activity
         }
-        //todo parse message and sendAsync
-
-
-        return START_STICKY;
+        return START_STICKY
     }
 
 
@@ -94,7 +103,7 @@ class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
                 socServer = Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync( this, toaster)
+                    val serverAsyncTask = ServerAsync( this)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
@@ -193,7 +202,14 @@ class TCPservice : BaseService(), TriggerTask, Logger,SendDataString {
     }
 
     override fun send(address: MyAddress, string: String) {
-        TODO("Send the string to the adress")
+        when(address.type){
+            COMMUTYPE_WIFI->{
+                //todo send via wifi
+                val client= ClientAsync(address.adress as IpPort, toaster, this)
+                client.execute(string)
+
+            }
+        }
     }
 
 }

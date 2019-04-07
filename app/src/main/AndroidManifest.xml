@@ -152,21 +152,12 @@ Be sure to test that the app works without a touchscreen.
             </intent-filter>
         </receiver>
 
-
-        <!-- Fore BroadCastReceiver -->
+        <!-- For BroadCastReceiver -->
         <receiver android:name=".MyBroadCastReciever">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
-            <!-- <intent-filter> -->
-            <!-- <action android:name="Intent.unbi.tcpSend.TCP_MSG" /> -->
-            <!-- </intent-filter> -->
-            <!-- <intent-filter> -->
-            <!-- <action android:name="Intent.unbi.tcpSend.TCP_ID_MSG" /> -->
-            <!-- </intent-filter> -->
-            <!-- <intent-filter> -->
-            <!-- <action android:name="Intent.unbi.tcpSend.AUTOREM" /> -->
-            <!-- </intent-filter> -->
         </receiver>
     </application>
 

@@ -2,16 +2,20 @@ package com.unbi.connect
 
 import android.content.Context
 import com.google.gson.Gson
-import com.unbi.connect.messaging.DataList
-import com.unbi.connect.messaging.IpPort
-import com.unbi.connect.messaging.MyMessage
-import com.unbi.connect.messaging.PendingMessage
+import com.unbi.connect.messaging.*
 import com.unbi.connect.plugin.event.EditActivityEventValues
 import java.net.NetworkInterface
 import java.security.MessageDigest
 import java.util.*
 import java.net.SocketException
 import kotlin.collections.ArrayList
+import android.text.format.Formatter.formatIpAddress
+import android.content.Context.WIFI_SERVICE
+import android.net.wifi.WifiManager
+import android.support.v4.content.ContextCompat.getSystemService
+import java.lang.Exception
+import java.math.BigInteger
+import java.net.InetAddress
 
 
 //never use "object" it is a trap... it will not work with Gson
@@ -51,6 +55,7 @@ class Userdata private constructor() {
     }
 
     //functions......
+
     fun save(applicationContext: Context?, id: Int, value: Any) {
         when (id) {
 
@@ -99,11 +104,18 @@ class Userdata private constructor() {
         /**
          * end of copying vaiable
          */
-        Userdata.instance = data
 
+        /**Lets read the Ip adress
+         * of the device
+         */
+        data.grabLocalIp()
+        data.isReadedfromSpref=true
+        Userdata.instance = data
     }
 
-
+    private fun grabLocalIp() {
+        ipport = IpPort(getDeviceIpAddress(), ipport.port)
+    }
 }
 
 
@@ -112,7 +124,7 @@ class ApplicationInstance private constructor() {
         val instance = ApplicationInstance()
     }
 
-    var communicator:Communicator?=null
+    var communicator: Communicator? = null
     var isCapturingMode: Boolean = false
     val pendingtaskertask = PendingTaskerTask()
     var isLogging = false

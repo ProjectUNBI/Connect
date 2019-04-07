@@ -12,6 +12,8 @@ import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
 import android.content.ClipboardManager
 import android.net.Uri
 import android.support.v4.content.ContextCompat.getSystemService
+import com.unbi.connect.messaging.IpPort
+import com.unbi.connect.messaging.MyAddress
 import java.net.URI
 
 
@@ -83,7 +85,9 @@ class CustomActivityProcessor(val message: MyMessage) {
                 message.taskName,
                 RESULT_SUCCESS
         )
-        response.secureAndSend(message.sender, toaster, logger)
+
+        val adddres=MyAddress(message.sender,response.commuType)
+        ApplicationInstance.instance.communicator?.sendMessage(response,adddres)
     }
 
     private fun dofindphone(context: Context) {
@@ -162,7 +166,8 @@ class CustomActivityProcessor(val message: MyMessage) {
                 message.taskName,
                 RESULT_UNKNOWN
         )
-        messageTosend.secureAndSend(message.sender, toaster, logger)
+        val address=MyAddress(message.sender,messageTosend.commuType)
+        ApplicationInstance.instance.communicator?.sendMessage(messageTosend,address)
 
     }
 

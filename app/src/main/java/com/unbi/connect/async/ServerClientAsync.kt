@@ -8,7 +8,7 @@ import java.net.Socket
 import java.io.*
 import java.net.InetAddress
 
-class ServerAsync( val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket, Void, MyMessage>() {
+class ServerAsync( val logger: Logger) : AsyncTask<Socket, Void, MyMessage>() {
     private val LOGTAG: String = "ServerClientAsync"
     override fun doInBackground(vararg params: Socket?): MyMessage? {
         val socket = params[0]
@@ -19,36 +19,24 @@ class ServerAsync( val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket
         try {
 
             val stream = socket.getInputStream()
-//            val out = PrintWriter(// fotr response
+//            val out = PrintWriter(// for response
 //                socket.getOutputStream(),
 //                true
 //            )
-
             //out.println("Welcome to \""+Server_Name+"\" Server");//it is the reply
-            // actually id dont want to do any response to the cleint.. we will send directly to the  cleint server ipPort
+            // actually i dont want to do any response to the cleint.. we will send directly to the  cleint server ipPort
             val br = BufferedReader(
                 InputStreamReader(stream)
             )
             val str=br.readLine()// read alll the line
             socket.close();
             issocketclosed=true
-//            val msgType=MessageProcessor(str,logger).messageTaskType
-//            if (msgType.message == null) {
-//                return null
-//            }
-//            if(msgType.type== TO_NOT_TODO){
-//                return null
-//            }
-//            if(msgType.type== TO_REDIRECT){
-//                msgType.message.sendAsync(msgType.thesender,toaster,logger)
-//            }
-//            if(msgType.type== TO_TRIGGER){
-//                return msgType.message
-//            }
             val communicator=ApplicationInstance.instance.communicator
-            communicator.listenMessage(str)
-
-
+            if (communicator != null) {
+                communicator.listenMessage(str)
+            }else{
+                Log.d(LOGTAG,"Communicator is null")
+            }
         } catch (e: IOException) {
             logger.show(LOG_TYPE_ERROR, e.message.toString())
             e.printStackTrace()
@@ -60,37 +48,13 @@ class ServerAsync( val logger: Logger, val toaster: Toaster?) : AsyncTask<Socket
     }
 
 
-    override fun onPostExecute(message: MyMessage?) {
-        super.onPostExecute(message)
-        if (message == null) {
-            return
-        }
-        //from this return if salt to check is null. we dont want to parse such message
-        if (message.saltToCheck == null) {
-            logger.show(LOG_TYPE_ERROR, "Salt is null and message is not of init mtype")
-            return// validdating salt to check is not null again.. not need to do it
-        }
-
-        if (ApplicationInstance.instance.communicator==null||ApplicationInstance.instance.communicator.SaltDataArray.isValid(message.saltToCheck)) {
-            logger.show(LOG_TYPE_ERROR, "Invalid Salt and message is not of init mtype")
-            Log.d(LOGTAG, "salt is not valid")
-            return
-        }
-        //now we have got a valid message .... do something
-        //todo perform some interesting Task
-        listener.ActionComplete(message)
-    }
-
 }
 
 
-class ClientAsync(val ipPort: IpPort?, val toaster: Toaster?, val logger: Logger?) : AsyncTask<MyMessage, String,Unit>() {
+class ClientAsync(val ipPort: IpPort, val toaster: Toaster?, val logger: Logger?) : AsyncTask<String, String,Unit>() {
 
-    override fun doInBackground(vararg params: MyMessage) {
-        val message = params[0]
-
-        val stringTosend = message.getEncryptedMsg()
-
+    override fun doInBackground(vararg params: String) {
+        val stringTosend =params[0]
         try {
             if (ipPort == null) {
                 logger?.show(LOG_TYPE_ERROR, "Null ip and port")
@@ -127,7 +91,7 @@ class ClientAsync(val ipPort: IpPort?, val toaster: Toaster?, val logger: Logger
             publishProgress(e.message)
             Log.e(MyMessage::class.java.simpleName, e.message)
         }
-        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+message.sender.ip+":"+message.sender.port)
+        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+ipPort.ip+":"+ipPort.port)
         publishProgress("success")
         return
     }
