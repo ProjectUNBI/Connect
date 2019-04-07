@@ -35,10 +35,7 @@ class FragmentLogView : BaseFragMent(), LogUpdater {
             R.id.but_log_clear -> {
                 tv_log.text = ""
             }
-
         }
-
-
     }
 
 
