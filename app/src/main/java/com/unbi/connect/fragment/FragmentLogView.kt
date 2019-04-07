@@ -33,7 +33,7 @@ class FragmentLogView : BaseFragMent(), LogUpdater {
                 but_log_off.visibility = GONE
             }
             R.id.but_log_clear -> {
-                TODO("Clear the Log")
+                tv_log.text = ""
             }
 
         }
