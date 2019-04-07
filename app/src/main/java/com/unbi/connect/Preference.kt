@@ -11,6 +11,7 @@ import java.net.SocketException
 import kotlin.collections.ArrayList
 import android.text.format.Formatter.formatIpAddress
 import android.content.Context.WIFI_SERVICE
+import android.media.Ringtone
 import android.net.wifi.WifiManager
 import android.support.v4.content.ContextCompat.getSystemService
 import java.lang.Exception
@@ -128,6 +129,10 @@ class ApplicationInstance private constructor() {
     var isCapturingMode: Boolean = false
     val pendingtaskertask = PendingTaskerTask()
     var isLogging = false
+
+    //for find phone
+    var prevNotiFindPhone:Int=INVALID_NOTI
+    var rington:Ringtone?=null
 
 }
 

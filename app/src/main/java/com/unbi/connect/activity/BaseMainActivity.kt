@@ -106,7 +106,6 @@ open class BaseMainActivity : AppCompatActivity(), ServiceConnection, ServiceToA
     }
 
     override fun sendtoActivity(type: Int, vararg any: Any) {
-        Log.d("SERVICETOACTIV", type.toString())
         when (type) {
             DEFAULT -> {
                 /**

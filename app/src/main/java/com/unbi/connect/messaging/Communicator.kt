@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.unbi.connect.*
 import com.unbi.connect.async.AssyncViewUpdater
+import com.unbi.connect.async.AssyncViewUpdater.Companion.CAPTURE_TYPE
 import com.unbi.connect.async.AssyncViewUpdater.Companion.LOGTYPE
 import com.unbi.connect.async.ServerAsync
 import com.unbi.connect.util_classes.AES_Util
@@ -15,35 +16,37 @@ import com.unbi.connect.util_classes.AES_Util
 /**
  * This class  is the Heart of this secure Communication
  *@param sendDataString it is the interface to send the message. the string should directly send
- *@param triggerTask this will pass messagetasktype which we will trigger
  * this object has a listener function ... all the TCP,s input string {if bluetooth communicaton(bluetooth)} should pass
  *
  */
 class Communicator(
-    val sendDataString: SendDataString,
-    val triggerTask: TriggerTask
+    val sendDataString: SendDataString
 ) {
     val LOG_TAG = Communicator::class.java.name
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
 
     /**
-     * This Function should link directly to the mesge reciver
+     * This Function should link directly to the messge reciver
      */
     fun listenMessage(string: String, asyncUpdater: AssyncViewUpdater) {
         //we should decrypt the dtring
-        asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_NORMAL, string)
+        asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_NORMAL, string)
         val decrypt = AES_Util().decrypt(string)
-        asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_NORMAL, decrypt.toString())
+        asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_NORMAL, decrypt.toString())
         if (decrypt == null) {
-            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Decrypted Message is null/password missmatch")
+            asyncUpdater.mypublish(
+                LOGTYPE,
+                LOG_TYPE_ERROR,
+                "Decrypted Message is null/password missmatch"
+            )
             return
         }
         //we shold construct the message Object
         val msg = Gson().fromJson(decrypt, MyMessage::class.java)
         //now we are checking about message
         if (msg == null) {
-            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Message is null/not valid format")
+            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_ERROR, "Message is null/not valid format")
             return
         }
 
@@ -55,7 +58,11 @@ class Communicator(
          * first we will check if the salt is also null
          */
         if (msg.mtype == TYPE_INIT && msg.saltToCheck == null) {
-            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_NORMAL, "Sender salt is null,sending a valid salt")
+            asyncUpdater.mypublish(
+                LOGTYPE,
+                LOG_TYPE_NORMAL,
+                "Sender salt is null,sending a valid salt"
+            )
             val salttoadd = msg.saltToAdd
             val saltocheck = Salt(milli = System.currentTimeMillis()).generate(SaltDataArray)
 
@@ -77,7 +84,7 @@ class Communicator(
             return
         }
         if (msg.mtype != TYPE_INIT && msg.saltToCheck == null) {
-            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt(null salt)")
+            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_ERROR, "Invalid Salt(null salt)")
             return
             // we will not accept any type of message if salttoCheck is null from this
         }
@@ -90,14 +97,14 @@ class Communicator(
              * if not valid dont do anything
              */
             if (!valid) {
-                asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt")
+                asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_ERROR, "Invalid Salt")
                 return
             }
             /**
              * Ok Salt is valid, so lets check if there is Pending messahges from the PendingMessageDataArray
              */
 
-            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Valid salt...sending actual meaasge")
+            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_NORMAL, "Valid salt...sending actual meaasge")
             val pendingmessage = PendingMessageDataArray
                 .getAndPopTimeBaseObject(msg.uuidToCheck?.uuid, PendingMessage::class.java)
 
@@ -123,7 +130,7 @@ class Communicator(
                 //add to pending wait response
 
             } else {
-                asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "No such pending message")
+                asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_ERROR, "No such pending message")
                 Log.e(LOG_TAG, "No such pending message")
             }
             return
@@ -145,10 +152,13 @@ class Communicator(
          */
         val valid = SaltDataArray.isValid(msg.saltToCheck as TimeBaseObject)
         if (!valid) {
-            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt")
+            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_ERROR, "Invalid Salt")
             return
         }
-        triggerTask.triggered(msg,asyncUpdater)
+        asyncUpdater.mypublish(
+            CAPTURE_TYPE,
+            msg
+        )// we use this because we have to set the UI of the capture text so we need to set the text from the same thread or toast from same thread
 
 
     }
@@ -197,5 +207,5 @@ interface SendDataString {
 }
 
 interface TriggerTask {
-    fun triggered(message: MyMessage,asyncUpdater: AssyncViewUpdater)
+    fun triggered(message: MyMessage, asyncUpdater: AssyncViewUpdater?)
 }

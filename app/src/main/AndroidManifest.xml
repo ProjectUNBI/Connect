@@ -52,9 +52,11 @@ Be sure to test that the app works without a touchscreen.
             </intent-filter>
         </activity>
         <!--FindPhone Activity-->
-        <activity
-            android:name=".activity.FindPhoneActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <!--<activity-->
+            <!--android:name=".activity.FindPhoneActivity"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
+            <!--android:showOnLockScreen="true"-->
+            <!--android:turnScreenOn="true"/>-->
 
         <!-- TcpService -->
         <service android:name=".service.TCPservice" /> <!-- Edit Activity -->

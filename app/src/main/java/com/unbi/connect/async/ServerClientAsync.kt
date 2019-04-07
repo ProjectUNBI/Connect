@@ -8,7 +8,7 @@ import java.net.Socket
 import java.io.*
 import java.net.InetAddress
 
-class ServerAsync(toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(toaster,logger) {
+class ServerAsync(toaster: Toaster?, logger: Logger?,trig:TriggerTask) :  AssyncViewUpdater(toaster,logger,trig) {
     private val LOGTAG: String = "ServerClientAsync"
     override fun doInBackground(vararg params: Any?): MyMessage? {
         val socket = params[0] as Socket
@@ -50,7 +50,10 @@ class ServerAsync(toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(toast
 }
 
 
-class ClientAsync(private val ipPort: IpPort, toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(toaster,logger) {
+class ClientAsync(private val ipPort: IpPort, toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(
+    toaster,
+    logger
+) {
 
     override fun doInBackground(vararg params: Any) {
         val stringTosend =params[0] as String
@@ -92,10 +95,15 @@ class ClientAsync(private val ipPort: IpPort, toaster: Toaster?, logger: Logger?
 }
 
 
-abstract class  AssyncViewUpdater( val toaster: Toaster?, val logger: Logger?) : AsyncTask<Any,Any,Any>(){
+abstract class  AssyncViewUpdater(
+    val toaster: Toaster?,
+    val logger: Logger?,
+    val trig: TriggerTask?=null
+) : AsyncTask<Any,Any,Any>(){
     companion object {
         val TOASTYPE=1
         val LOGTYPE=2
+        val CAPTURE_TYPE=3
 
     }
     fun mypublish(vararg values: Any?){
@@ -111,9 +119,10 @@ abstract class  AssyncViewUpdater( val toaster: Toaster?, val logger: Logger?) :
             }
             LOGTYPE->{
                 logger?.show(values[1] as Int, values[2] as String)
-
             }
-
+            CAPTURE_TYPE->{
+                trig?.triggered(values[1] as MyMessage,this)
+            }
         }
 
     }

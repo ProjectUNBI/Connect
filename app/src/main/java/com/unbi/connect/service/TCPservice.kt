@@ -23,8 +23,7 @@ import com.unbi.connect.async.ClientAsync
 import com.unbi.connect.messaging.*
 
 
-class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
-
+class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
 
     val INTENT_REQUEST_REQUERY = Intent(
         com.twofortyfouram.locale.api.Intent.ACTION_REQUEST_QUERY
@@ -56,17 +55,25 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (ApplicationInstance.instance.communicator == null) {
-            ApplicationInstance.instance.communicator = Communicator(this, this)
+            ApplicationInstance.instance.communicator = Communicator(this)
         }
         /**
          * Lets check if the bundle has some exxtra and if this has no extra just leave
          * if extra then we have to restart the service
+         * or stop the playing find phone sound if started
          */
         val extra_string = intent?.getStringExtra(TCP_SERVICE_EXTRA)
-        if (extra_string.equals(TCPSERVICE_RESTART)) {
-            //restart the service
-            restartServer()
-            return START_STICKY
+        when (extra_string) {
+            TCPSERVICE_RESTART -> {
+                //restart the service
+                restartServer()
+                return START_STICKY
+            }
+            TCPSERVICE_NOTIDISMISSED -> {
+                ApplicationInstance.instance.rington?.stop()
+                return START_STICKY
+            }
+
         }
 
         //////////////
@@ -106,7 +113,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
                 socServer = Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync(this,this)
+                    val serverAsyncTask = ServerAsync(this, this, this)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
@@ -118,7 +125,6 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
         val text_body = "Running background....."
         val notification = OngoingNotificationBuilder().buildOngoingNotification(
             applicationContext,
-            TCPservice::class,
             iconId,
             title,
             text_body
@@ -129,8 +135,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
     }
 
 
-
-    override fun triggered(message: MyMessage, asyncUpdater: AssyncViewUpdater) {
+    override fun triggered(message: MyMessage, asyncUpdater: AssyncViewUpdater?) {
         if (ApplicationInstance.instance.isCapturingMode) {
             servicToActivity?.sendtoActivity(ServiceToActivity.DEFAULT, message)
             return
@@ -171,10 +176,10 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
     }
 
     override fun show(msg: String?) {
-        if(!Userdata.instance.isToast){
+        if (!Userdata.instance.isToast) {
             return
         }
-        Toast.makeText(applicationContext,msg,LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, msg, LENGTH_SHORT).show()
     }
 
     private fun prepairemessageforIntent(intent: Intent, myMessage: MyMessage) {
@@ -221,7 +226,6 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
                 //todo send via wifi
                 val client = ClientAsync(address.adress as IpPort, this, this)
                 client.execute(string)
-
             }
         }
     }
