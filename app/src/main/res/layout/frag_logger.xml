@@ -13,10 +13,15 @@
         android:layout_margin="10sp"
         android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/tv_log_message"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_log_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </ScrollView>
 
     </LinearLayout>
 
@@ -28,26 +33,27 @@
 
         <Button
             android:id="@+id/but_log_toggle_on"
-            android:text="@string/logon"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10sp" />
+            android:layout_margin="10sp"
+            android:text="@string/logon"
+            android:textAllCaps="false" />
+
         <Button
             android:id="@+id/but_log_toggle_off"
-            android:visibility="gone"
-            android:text="@string/logoff"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10sp" />
+            android:layout_margin="10sp"
+            android:text="@string/logoff"
+            android:textAllCaps="false"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/but_log_clear"
-            android:text="@string/clear"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10sp" />
+            android:layout_margin="10sp"
+            android:text="@string/clear"
+            android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>

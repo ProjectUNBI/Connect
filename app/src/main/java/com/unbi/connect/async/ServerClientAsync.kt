@@ -8,14 +8,11 @@ import java.net.Socket
 import java.io.*
 import java.net.InetAddress
 
-class ServerAsync( val logger: Logger) : AsyncTask<Socket, Void, MyMessage>() {
+class ServerAsync(toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(toaster,logger) {
     private val LOGTAG: String = "ServerClientAsync"
-    override fun doInBackground(vararg params: Socket?): MyMessage? {
-        val socket = params[0]
+    override fun doInBackground(vararg params: Any?): MyMessage? {
+        val socket = params[0] as Socket
         var issocketclosed=false
-        if (socket == null) {
-            return null
-        }
         try {
 
             val stream = socket.getInputStream()
@@ -33,12 +30,12 @@ class ServerAsync( val logger: Logger) : AsyncTask<Socket, Void, MyMessage>() {
             issocketclosed=true
             val communicator=ApplicationInstance.instance.communicator
             if (communicator != null) {
-                communicator.listenMessage(str)
+                communicator.listenMessage(str,this)
             }else{
                 Log.d(LOGTAG,"Communicator is null")
             }
         } catch (e: IOException) {
-            logger.show(LOG_TYPE_ERROR, e.message.toString())
+            mypublish(LOGTYPE,LOG_TYPE_ERROR, e.message.toString())
             e.printStackTrace()
         } finally {
             if(!issocketclosed)
@@ -48,20 +45,16 @@ class ServerAsync( val logger: Logger) : AsyncTask<Socket, Void, MyMessage>() {
     }
 
 
+
+
 }
 
 
-class ClientAsync(val ipPort: IpPort, val toaster: Toaster?, val logger: Logger?) : AsyncTask<String, String,Unit>() {
+class ClientAsync(private val ipPort: IpPort, toaster: Toaster?, logger: Logger?) :  AssyncViewUpdater(toaster,logger) {
 
-    override fun doInBackground(vararg params: String) {
-        val stringTosend =params[0]
+    override fun doInBackground(vararg params: Any) {
+        val stringTosend =params[0] as String
         try {
-            if (ipPort == null) {
-                logger?.show(LOG_TYPE_ERROR, "Null ip and port")
-                publishProgress("Null ip and port")
-                Log.e(MyMessage::class.java.simpleName, "Null ip and port")
-                return
-            }
             val serverAddr = InetAddress.getByName(ipPort.ip)
             val socket = Socket(serverAddr, ipPort.port)
 
@@ -76,8 +69,8 @@ class ClientAsync(val ipPort: IpPort, val toaster: Toaster?, val logger: Logger?
                 val str = input.readLine()
                 out.flush()
             } catch (e: Exception) {
-                logger?.show(LOG_TYPE_ERROR, e.message.toString())
-                publishProgress(e.message)
+                mypublish(LOGTYPE,LOG_TYPE_ERROR, e.message.toString())
+                mypublish(TOASTYPE,e.message)
                 Log.e(MyMessage::class.java.simpleName, e.message)
 
             } finally {
@@ -87,30 +80,44 @@ class ClientAsync(val ipPort: IpPort, val toaster: Toaster?, val logger: Logger?
             }
 
         } catch (e: Exception) {
-            logger?.show(LOG_TYPE_ERROR, e.message.toString())
-            publishProgress(e.message)
+            mypublish(LOGTYPE,LOG_TYPE_ERROR, e.message.toString())
+            mypublish(TOASTYPE,e.message)
             Log.e(MyMessage::class.java.simpleName, e.message)
         }
-        logger?.show(LOG_TYPE_ERROR, "Suucessfully sent to: "+ipPort.ip+":"+ipPort.port)
-        publishProgress("success")
+        mypublish(LOGTYPE, LOG_TYPE_SUCCESS, "Sucessfully sent to: "+ipPort.ip+":"+ipPort.port)
+//        mypublish(TOASTYPE,"success")
         return
     }
-
-    override fun onProgressUpdate(vararg values: String) {
-        super.onProgressUpdate(*values)
-        if (toaster != null) {
-            toaster.show(values[0])
-        }
-    }
-
 
 }
 
 
+abstract class  AssyncViewUpdater( val toaster: Toaster?, val logger: Logger?) : AsyncTask<Any,Any,Any>(){
+    companion object {
+        val TOASTYPE=1
+        val LOGTYPE=2
 
+    }
+    fun mypublish(vararg values: Any?){
+        publishProgress(*values)
+    }
+    override fun onProgressUpdate(vararg values: Any) {
+        super.onProgressUpdate(*values)
+        when(values[0] as Int){
+            TOASTYPE->{
+                if (toaster != null) {
+                    toaster.show(values[1] as String)
+                }
+            }
+            LOGTYPE->{
+                logger?.show(values[1] as Int, values[2] as String)
 
+            }
 
+        }
 
+    }
+}
 
 
 

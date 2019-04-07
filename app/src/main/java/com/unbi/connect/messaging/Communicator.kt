@@ -3,6 +3,9 @@ package com.unbi.connect.messaging
 import android.util.Log
 import com.google.gson.Gson
 import com.unbi.connect.*
+import com.unbi.connect.async.AssyncViewUpdater
+import com.unbi.connect.async.AssyncViewUpdater.Companion.LOGTYPE
+import com.unbi.connect.async.ServerAsync
 import com.unbi.connect.util_classes.AES_Util
 
 /**
@@ -13,11 +16,13 @@ import com.unbi.connect.util_classes.AES_Util
  * This class  is the Heart of this secure Communication
  *@param sendDataString it is the interface to send the message. the string should directly send
  *@param triggerTask this will pass messagetasktype which we will trigger
- *@param logger if you want some kind of loging mesage
  * this object has a listener function ... all the TCP,s input string {if bluetooth communicaton(bluetooth)} should pass
  *
  */
-class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerTask, val logger: Logger? = null) {
+class Communicator(
+    val sendDataString: SendDataString,
+    val triggerTask: TriggerTask
+) {
     val LOG_TAG = Communicator::class.java.name
     val SaltDataArray = DataList()
     val PendingMessageDataArray = DataList()
@@ -25,18 +30,20 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
     /**
      * This Function should link directly to the mesge reciver
      */
-    fun listenMessage(string: String) {
+    fun listenMessage(string: String, asyncUpdater: AssyncViewUpdater) {
         //we should decrypt the dtring
+        asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_NORMAL, string)
         val decrypt = AES_Util().decrypt(string)
+        asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_NORMAL, decrypt.toString())
         if (decrypt == null) {
-            logger?.show(LOG_TYPE_ERROR, "Decrypted Message is null/password missmatch")
+            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Decrypted Message is null/password missmatch")
             return
         }
         //we shold construct the message Object
         val msg = Gson().fromJson(decrypt, MyMessage::class.java)
         //now we are checking about message
         if (msg == null) {
-            logger?.show(LOG_TYPE_ERROR, "Message is null/not valid format")
+            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Message is null/not valid format")
             return
         }
 
@@ -44,34 +51,33 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
 
         //So message is not null
         //so lets check the message type is INIT type or not
-
         /**
          * first we will check if the salt is also null
          */
         if (msg.mtype == TYPE_INIT && msg.saltToCheck == null) {
-            logger?.show(LOG_TYPE_ERROR, "Sender salt is null,sending a valid salt")
+            asyncUpdater.mypublish(LOGTYPE, LOG_TYPE_NORMAL, "Sender salt is null,sending a valid salt")
             val salttoadd = msg.saltToAdd
             val saltocheck = Salt(milli = System.currentTimeMillis()).generate(SaltDataArray)
 
             val message = MyMessage(
-                    //dont forget to interchange salt from previous message
-                    saltocheck,
-                    salttoadd,
-                    Userdata.instance.ipport,
-                    null,
-                    null,
-                    null,
-                    false,
-                    TYPE_INIT,
-                    null,
-                    msg.uuidToadd,//dont forget to change the UUIDs
-                    commuType = msg.commuType
+                //dont forget to interchange salt from previous message
+                saltocheck,
+                salttoadd,
+                Userdata.instance.ipport,
+                null,
+                null,
+                null,
+                false,
+                TYPE_INIT,
+                null,
+                msg.uuidToadd,//dont forget to change the UUIDs
+                commuType = msg.commuType
             )
             dosendMessageBack(sndr, message)
             return
         }
         if (msg.mtype != TYPE_INIT && msg.saltToCheck == null) {
-            logger?.show(LOG_TYPE_ERROR, "Invalid Salt(null salt)")
+            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt(null salt)")
             return
             // we will not accept any type of message if salttoCheck is null from this
         }
@@ -84,40 +90,40 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
              * if not valid dont do anything
              */
             if (!valid) {
-                logger?.show(LOG_TYPE_ERROR, "Invalid Salt")
+                asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt")
                 return
             }
             /**
              * Ok Salt is valid, so lets check if there is Pending messahges from the PendingMessageDataArray
              */
 
-            logger?.show(LOG_TYPE_ERROR, "Valid salt...sending actual meaasge")
+            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Valid salt...sending actual meaasge")
             val pendingmessage = PendingMessageDataArray
-                    .getAndPopTimeBaseObject(msg.uuidToCheck?.uuid, PendingMessage::class.java)
+                .getAndPopTimeBaseObject(msg.uuidToCheck?.uuid, PendingMessage::class.java)
 
             if (pendingmessage != null) {
                 val tempmsg = pendingmessage.message
                 val tobesend = MyMessage(
-                        Salt(milli = System.currentTimeMillis()).generate(SaltDataArray),
-                        msg.saltToAdd,
-                        Userdata.instance.ipport,
-                        tempmsg.tag,
-                        tempmsg.message,
-                        tempmsg.extra,
-                        tempmsg.isIntent,
-                        tempmsg.mtype,
-                        null,
-                        msg.uuidToadd,
-                        tempmsg.taskName,
-                        tempmsg.resultCode,
-                        commuType = msg.commuType
+                    Salt(milli = System.currentTimeMillis()).generate(SaltDataArray),
+                    msg.saltToAdd,
+                    Userdata.instance.ipport,
+                    tempmsg.tag,
+                    tempmsg.message,
+                    tempmsg.extra,
+                    tempmsg.isIntent,
+                    tempmsg.mtype,
+                    null,
+                    msg.uuidToadd,
+                    tempmsg.taskName,
+                    tempmsg.resultCode,
+                    commuType = msg.commuType
 
                 )
                 dosendMessageBack(sndr, tobesend)
                 //add to pending wait response
 
             } else {
-                logger?.show(LOG_TYPE_ERROR, "No such pending message")
+                asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "No such pending message")
                 Log.e(LOG_TAG, "No such pending message")
             }
             return
@@ -139,32 +145,32 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
          */
         val valid = SaltDataArray.isValid(msg.saltToCheck as TimeBaseObject)
         if (!valid) {
-            logger?.show(LOG_TYPE_ERROR, "Invalid Salt")
+            asyncUpdater.mypublish(LOGTYPE,LOG_TYPE_ERROR, "Invalid Salt")
             return
         }
-        triggerTask.triggered(msg)
+        triggerTask.triggered(msg,asyncUpdater)
 
 
     }
 
-    fun sendMessage(message: MyMessage,address: MyAddress){
+    fun sendMessage(message: MyMessage, address: MyAddress) {
         PendingMessage(
-                message,
-                System.currentTimeMillis()
+            message,
+            System.currentTimeMillis()
         ).addToPendings(PendingMessageDataArray)
         val salt_toadd = Salt(milli = System.currentTimeMillis()).generate(SaltDataArray)
         val initmesage = MyMessage(
-                salt_toadd,
-                null,
-                Userdata.instance.ipport,
-                null,
-                null,
-                null,
-                false,
-                TYPE_INIT,//message is init mtype
-                message.uuidToadd,
-                null,
-                null
+            salt_toadd,
+            null,
+            Userdata.instance.ipport,
+            null,
+            null,
+            null,
+            false,
+            TYPE_INIT,//message is init mtype
+            message.uuidToadd,
+            null,
+            null
         )
         dosendMessageBack(address, initmesage)
     }
@@ -191,5 +197,5 @@ interface SendDataString {
 }
 
 interface TriggerTask {
-    fun triggered(message: MyMessage)
+    fun triggered(message: MyMessage,asyncUpdater: AssyncViewUpdater)
 }

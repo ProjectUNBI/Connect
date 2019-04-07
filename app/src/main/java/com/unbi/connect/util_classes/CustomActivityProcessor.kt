@@ -12,6 +12,9 @@ import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
 import android.content.ClipboardManager
 import android.net.Uri
 import android.support.v4.content.ContextCompat.getSystemService
+import com.google.gson.Gson
+import com.unbi.connect.async.AssyncViewUpdater
+import com.unbi.connect.async.AssyncViewUpdater.Companion.LOGTYPE
 import com.unbi.connect.messaging.IpPort
 import com.unbi.connect.messaging.MyAddress
 import java.net.URI
@@ -45,12 +48,13 @@ class CustomActivityProcessor(val message: MyMessage) {
         }
     }
 
-    fun performIt(context: Context, toaster: Toaster?, logger: Logger?) {
+    fun performIt(context: Context,async: AssyncViewUpdater?) {
         var msg: String? = null
         when (trigerWhat) {
             FINDPHONE -> {
                 msg = STR_FINDPHONE
                 dofindphone(context)
+                async?.mypublish(LOGTYPE,LOG_TYPE_SUCCESS,"Phone finding activity Launched")
             }
             COPYTEXT -> {
                 msg = STR_COPYTOCLIP
@@ -58,13 +62,14 @@ class CustomActivityProcessor(val message: MyMessage) {
                 val msgcontent = message.message
                 // copy clipboard data
                 copyToClipboard(context, msgcontent)
+                async?.mypublish(LOGTYPE,LOG_TYPE_SUCCESS,"Successfully copied: ${msgcontent}")
                 //toast copy if toastable
 
 
             }
             SENDCLIP -> {
                 msg = null// actually we will send message
-                performSendClip(context, toaster, logger)
+                performSendClip(context,async)
             }
 
         }
@@ -112,7 +117,7 @@ class CustomActivityProcessor(val message: MyMessage) {
     /**
      * The function send the Clipboard Content to the sender
      */
-    private fun performSendClip(context: Context,toaster:Toaster?, logger:Logger?) {
+    private fun performSendClip(context: Context,async: AssyncViewUpdater?) {
         /**
          * The folowing grab the text content in the Clipboard content an store
          * in the variable "pasteData
@@ -151,6 +156,11 @@ class CustomActivityProcessor(val message: MyMessage) {
          * The folowing is the sending message process\
          *
          */
+        if(pasteData.equals(NULL_WORD)){
+            async?.mypublish(LOGTYPE,LOG_TYPE_WARNING, NULL_WORD)
+        }else{
+            async?.mypublish(LOGTYPE,LOG_TYPE_SUCCESS, "Clipboard text: $pasteData")
+        }
 
         val messageTosend = MyMessage(
                 null,//we dont want any response so
@@ -168,6 +178,8 @@ class CustomActivityProcessor(val message: MyMessage) {
         )
         val address=MyAddress(message.sender,messageTosend.commuType)
         ApplicationInstance.instance.communicator?.sendMessage(messageTosend,address)
+        async?.mypublish(LOGTYPE,LOG_TYPE_SUCCESS, "Sent clip data to ${Gson().toJson(address)}")
+
 
     }
 

@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import com.unbi.connect.*
 import com.unbi.connect.activity.MainActivity
 import com.unbi.connect.async.ServerAsync
@@ -16,11 +18,13 @@ import com.unbi.connect.plugin.event.EventEditActivity
 import com.unbi.connect.util_classes.CustomActivityProcessor
 import com.unbi.connect.TaskerPlugin
 import com.unbi.connect.activity.ServiceToActivity
+import com.unbi.connect.async.AssyncViewUpdater
 import com.unbi.connect.async.ClientAsync
 import com.unbi.connect.messaging.*
 
 
-class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
+class TCPservice : BaseService(), TriggerTask, Logger, SendDataString,Toaster {
+
 
     val INTENT_REQUEST_REQUERY = Intent(
         com.twofortyfouram.locale.api.Intent.ACTION_REQUEST_QUERY
@@ -35,7 +39,8 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
     var socServer: ServerSocket? = null
     val binder = LocalBinder()
     var notiId: Int = NOTY_ID_NOTSET
-    var servicToActivity:ServiceToActivity?=null
+    var servicToActivity: ServiceToActivity? = null
+
     inner class LocalBinder : Binder() {
 
         internal// Return this instance of LocalService so clients can call public methods
@@ -50,15 +55,15 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if(ApplicationInstance.instance.communicator==null){
-            ApplicationInstance.instance.communicator= Communicator(this, this, this)
+        if (ApplicationInstance.instance.communicator == null) {
+            ApplicationInstance.instance.communicator = Communicator(this, this)
         }
         /**
          * Lets check if the bundle has some exxtra and if this has no extra just leave
          * if extra then we have to restart the service
          */
-        val extra_string=intent?.getStringExtra(TCP_SERVICE_EXTRA)
-        if(extra_string.equals(TCPSERVICE_RESTART)){
+        val extra_string = intent?.getStringExtra(TCP_SERVICE_EXTRA)
+        if (extra_string.equals(TCPSERVICE_RESTART)) {
             //restart the service
             restartServer()
             return START_STICKY
@@ -67,7 +72,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
         //////////////
         if (serviceisNotStart) {
             showforeground()
-            serviceisNotStart= false
+            serviceisNotStart = false
         }
         if (intent == null) {
             return START_STICKY
@@ -92,7 +97,6 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
         showforeground()
     }
 
-    private val toaster: Toaster? = null//todo set thsi value
 
     private fun showforeground() {
 
@@ -102,7 +106,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
                 socServer = Server
                 while (true) {
                     mySocket = Server.accept()
-                    val serverAsyncTask = ServerAsync( this)
+                    val serverAsyncTask = ServerAsync(this,this)
                     serverAsyncTask.execute(mySocket)
                 }
             } catch (e: IOException) {
@@ -125,27 +129,28 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
     }
 
 
-    override fun triggered(message: MyMessage) {
+
+    override fun triggered(message: MyMessage, asyncUpdater: AssyncViewUpdater) {
         if (ApplicationInstance.instance.isCapturingMode) {
-            servicToActivity?.sendtoActivity(ServiceToActivity.DEFAULT,message)
+            servicToActivity?.sendtoActivity(ServiceToActivity.DEFAULT, message)
             return
         }
         if (Userdata.instance.iscustomactivity) {
             val customActivityProcessor = CustomActivityProcessor(message)
             if (customActivityProcessor.isTriggered) {
-                customActivityProcessor.performIt(applicationContext,toaster,this)
+                customActivityProcessor.performIt(applicationContext, asyncUpdater)
                 return
             }
         }
         //todo trigge the valid mesaage to do taskes
         if (message.isIntent) {
 //            TODO("SENT AS INTENT")
-            if(message.tag==null){
+            if (message.tag == null) {
                 return
             }
-            val intent=Intent()
+            val intent = Intent()
             intent.setAction(message.tag)
-            prepairemessageforIntent(intent,message)
+            prepairemessageforIntent(intent, message)
             sendBroadcast(intent)
             return
         }
@@ -158,8 +163,18 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
 
 
     override fun show(int: Int, msg: String) {
-        return
-        TODO("Todo to update the Looger view")
+
+        if (!ApplicationInstance.instance.isLogging) {
+            return
+        }
+        servicToActivity?.sendtoActivity(ServiceToActivity.LOG_DATA, int, msg)
+    }
+
+    override fun show(msg: String?) {
+        if(!Userdata.instance.isToast){
+            return
+        }
+        Toast.makeText(applicationContext,msg,LENGTH_SHORT).show()
     }
 
     private fun prepairemessageforIntent(intent: Intent, myMessage: MyMessage) {
@@ -201,10 +216,10 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
     }
 
     override fun send(address: MyAddress, string: String) {
-        when(address.type){
-            COMMUTYPE_WIFI->{
+        when (address.type) {
+            COMMUTYPE_WIFI -> {
                 //todo send via wifi
-                val client= ClientAsync(address.adress as IpPort, toaster, this)
+                val client = ClientAsync(address.adress as IpPort, this, this)
                 client.execute(string)
 
             }

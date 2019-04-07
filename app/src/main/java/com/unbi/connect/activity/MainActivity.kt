@@ -4,14 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.google.gson.Gson
+import com.unbi.connect.R
 import com.unbi.connect.Userdata
 import com.unbi.connect.bind
 import com.unbi.connect.fragment.FragmentCustomActivity
 import com.unbi.connect.fragment.FragmentLogView
-import android.view.inputmethod.InputMethodManager
-import com.unbi.connect.R
 
 
 class MainActivity : BaseMainActivity() {
@@ -39,8 +39,9 @@ class MainActivity : BaseMainActivity() {
             R.id.tv_custom_view -> {
                 mesagecapurer=startFragment(FragmentCustomActivity::class.java) as FragmentCustomActivity
             }
-            R.id.tv_log_view -> startFragment(FragmentLogView::class.java)
-//            R.id.tv_about -> startFragment(FragmentAbout::class)
+            R.id.tv_log_view -> {
+                logUpdater=startFragment(FragmentLogView::class.java) as FragmentLogView
+            }
             R.id.but_save -> {
 
                 Userdata.instance.save(applicationContext, R.id.edit_password, edit_password.text.toString())
@@ -101,7 +102,6 @@ class MainActivity : BaseMainActivity() {
     private val checklistener = CompoundButton.OnCheckedChangeListener { view, isChecked ->
         Userdata.instance.save(applicationContext, view.id, isChecked)
     }
-
 
     private fun hidefocus(v: View?) {
         try {
