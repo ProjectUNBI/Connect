@@ -126,10 +126,10 @@ class Communicator(val sendDataString: SendDataString, val triggerTask: TriggerT
          * Ok We have handlee all the INIT type message.. so dont pass
          * any INIT type message from here
          */
-        if (msg.tag == null) {
-            return//if there is no message tag then just return it
-        }
-        if (!(msg.tag.equals(TYPE_MESSAGE) || msg.tag.equals(TYPE_RESPOSNE))) {
+//        if (msg.tag == null) {
+//            return//if there is no message tag then just return it
+//        }
+        if (!(msg.mtype.equals(TYPE_MESSAGE) || msg.mtype.equals(TYPE_RESPOSNE))) {
             //if the message type is not response or messgetype...return
             return
         }

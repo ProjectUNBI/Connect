@@ -109,7 +109,7 @@ class Userdata private constructor() {
          * of the device
          */
         data.grabLocalIp()
-        data.isReadedfromSpref=true
+        data.isReadedfromSpref = true
         Userdata.instance = data
     }
 
@@ -197,13 +197,28 @@ fun getDeviceIpAddress(): String {
             ) {
                 val inetAddress = enumerationIpAddr.nextElement()
                 if (!inetAddress.isLoopbackAddress() && inetAddress.getAddress().size == 4) {
-                    return inetAddress.getHostAddress()
+                    if (isThisMyIpAddress(inetAddress)) {
+                        return inetAddress.getHostAddress()
+                    }
                 }
             }
         }
     } catch (e: SocketException) {
         e.stackTrace
-
     }
     return LOCAL_IP
+}
+
+fun isThisMyIpAddress(addr: InetAddress): Boolean {
+    // Check if the address is a valid special local or loop back
+    if (addr.isAnyLocalAddress || addr.isLoopbackAddress)
+        return true
+
+    // Check if the address is defined on any interface
+    try {
+        return NetworkInterface.getByInetAddress(addr) != null
+    } catch (e: SocketException) {
+        return false
+    }
+
 }

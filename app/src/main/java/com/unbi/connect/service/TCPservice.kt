@@ -62,7 +62,6 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString {
             //restart the service
             restartServer()
             return START_STICKY
-
         }
 
         //////////////
