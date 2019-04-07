@@ -1,6 +1,5 @@
 package com.unbi.connect.activity
 
-import android.media.MediaPlayer
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.os.Bundle
@@ -22,7 +21,6 @@ class FindPhoneActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
 
     }
     fun okClick(view:android.view.View){
