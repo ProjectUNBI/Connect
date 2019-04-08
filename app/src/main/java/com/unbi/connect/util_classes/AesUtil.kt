@@ -9,6 +9,11 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class AES_Util {
+    /**
+     * @param stringExtra :- this i sthe string whch we incrypt
+     * here the 'byte' is the byte array which generated from the password given by the userr
+     * @return the encrypted string
+     */
     fun encrypt(stringExtra: String?): String? {
         val byte=Userdata.instance.byte_global_password
         if (byte == null||stringExtra==null) {
@@ -17,6 +22,13 @@ class AES_Util {
         return encrypt(byte, stringExtra)
     }
 
+    /**
+     * @param string :- the encrypted string which need to be decryptedd
+     * kthe 'byte' is the password in byte array wwhich is stored after generated
+     * a password
+     * @return the decrypted string
+     * it will return null if the decryption fail
+     */
     fun decrypt(string: String?): String? {
         val byte=Userdata.instance.byte_global_password
         if (byte == null||string==null) {

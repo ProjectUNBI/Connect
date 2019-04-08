@@ -27,10 +27,18 @@ class CustomActivityProcessor(val message: MyMessage) {
         val UNKNOWN = -1
     }
 
+    //to check the MyMessage Object in constructor is consume when there is
+    // a matched in the custum task, we introduce 'isTriggered'
     var isTriggered: Boolean = false
+    //'trigerWhat'-> to identified which task has been triggered
     var trigerWhat = UNKNOWN
 
     init {
+        /**
+         * In this init, we find out which custom tasked is triggered
+         * if triggered we set the value of the isTriggered to 'true'
+         * the 'triggereWhat' is also set here
+         */
         if (!message.tag.equals(NULL_WORD)) {
             if (message.tag.equals(Userdata.instance.Trig_sendclip)) {
                 isTriggered = true
@@ -47,6 +55,14 @@ class CustomActivityProcessor(val message: MyMessage) {
         }
     }
 
+    /**
+     * @param context contect of the TCP service
+     * @param async AssyncViewUpdate where this methods is called
+     * we use this async task so that the published activity to
+     * macke change in the UI threads
+     * if we dont use async task we will catch error when changing the UI of the
+     * app
+     */
     fun performIt(context: Context, async: AssyncViewUpdater?) {
         var msg: String? = null
         when (trigerWhat) {
@@ -76,6 +92,11 @@ class CustomActivityProcessor(val message: MyMessage) {
         if (msg == null) {
             return
         }
+
+        /**
+         * the folowing code send a Resoponse type message to the sender adress so that
+         * 'the task is performed' should be notified
+         */
         val response = MyMessage(
             null,//we dont want any response so
             message.saltToAdd,//i think we can reuse the salt
@@ -95,6 +116,9 @@ class CustomActivityProcessor(val message: MyMessage) {
         ApplicationInstance.instance.communicator?.sendMessage(response, adddres)
     }
 
+    /**
+     * this method id to ring the phone and show the notification
+     */
     private fun dofindphone(context: Context) {
         if (ApplicationInstance.instance.prevNotiFindPhone != INVALID_NOTI) {
             //todo poppe the previouse notification
@@ -134,7 +158,10 @@ class CustomActivityProcessor(val message: MyMessage) {
         ApplicationInstance.instance.rington?.play()
     }
 
-
+    /**
+     * @param msgcontent it is the ''message of the MyMessage object
+     * it is copied to the android clipboard
+     */
     private fun copyToClipboard(context: Context, msgcontent: String?) {
         if (msgcontent == null) {
             return
