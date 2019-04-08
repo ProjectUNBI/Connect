@@ -124,7 +124,7 @@ class DataList:
                     newlist.append(timObj)
             self.arrayOftbObject = newlist
         finally:
-            self.lock.release()            
+            self.lock.release()
 
     def popexpiredObjectAsync(self):#for poping from alreadily locked thread
         self.lasttimepoped = getCurrentmilli()
@@ -182,7 +182,7 @@ class DataList:
             return isvalid
         finally:
             self.lock.release()
-            
+
 
 
 eg.globals.SALT_DATA_LIST = DataList()
@@ -484,7 +484,7 @@ class MyMessage(
         val uuidToCheck: MsgUUID?,
         val taskName: String? = null,
         val resultCode: Int = RESULT_UNKNOWN
-) 
+)
 
 '''
 
@@ -574,6 +574,15 @@ class MyPlugin(eg.PluginBase):
         self.treadserver = ThreadedServer('', int(self.port), self.key, self)
         threading.Thread(target=self.treadserver.listen, ).start()
 
+class SendingThread(threading.Thread):
+    def __init__(self,init,wheretosend,password):
+        super(SendingThread, self).__init__()
+        self.init=init
+        self.wheretosend=wheretosend
+        self.password=password
+
+    def run(self):
+        self.init.send(self.wheretosend, self.password)
 
 class SendMessage(eg.ActionBase):
     name = "Send Message"
@@ -600,5 +609,9 @@ class SendMessage(eg.ActionBase):
         salttoadd.generate(eg.globals.SALT_DATA_LIST)
         init = MyMessage(salttoadd, None, yourip, None, None, None, False, TYPE_INIT, uuidToadd, None)
         # todo do it in a async Thread
-        init.send(wheretosend, password)
+        #init.send(wheretosend, password)
+        thread = SendingThread(init,wheretosend, password)
+        thread.start()
+
+
 
