@@ -4,6 +4,10 @@ Tasker plugin for triggering or transfering between devices... AES encrypted mes
 
 # Features
 * Tasker app integrations
+* Three standalone functions : 
+   * 1) Find phone 
+   * 2) Copy text from another devices 
+   * 3) Send clipboard content to another device
 * Work with EventGhost.Eventghost Plugin-> [see](https://github.com/ProjectUNBI/Connect/tree/master/EventGhostPlugin/Connect) 
 * AES-128 CBC encryption
 * An action is triggered by a unique one time message only
