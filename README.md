@@ -4,7 +4,7 @@ Tasker plugin for triggering or transfering between devices... AES encrypted mes
 
 # Features
 * Tasker app integrations
-* Work with Event ghost plugin [see](https://github.com/ProjectUNBI/Connect/tree/master/EventGhostPlugin/Connect) 
+* Work with EventGhost.Eventghost Plugin-> [see](https://github.com/ProjectUNBI/Connect/tree/master/EventGhostPlugin/Connect) 
 * AES-128 CBC encryption
 * An action is triggered by a unique one time message only
 * Uses TCP socket type communication
