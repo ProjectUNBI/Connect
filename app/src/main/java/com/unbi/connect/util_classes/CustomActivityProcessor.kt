@@ -129,7 +129,7 @@ class CustomActivityProcessor(val message: MyMessage) {
 
         }
 
-        val iconId = R.drawable.draw_lock_connection
+        val iconId = R.drawable.ic_my_icon
         val title = "Hello"
         val text_body = "I am here..."
 
@@ -182,7 +182,7 @@ class CustomActivityProcessor(val message: MyMessage) {
          */
         val clipboard: ClipboardManager =
             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        var pasteData: String = ""
+        var pasteData= ""
         val descrip = clipboard.primaryClipDescription
         if (descrip != null) {
             when {

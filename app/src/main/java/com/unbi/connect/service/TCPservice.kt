@@ -120,7 +120,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
                 e.printStackTrace()
             }
         }).start()
-        val iconId = R.drawable.draw_lock_connection
+        val iconId = R.drawable.ic_my_icon
         val title = "Address: " + Userdata.instance.ipport.ip + ":" + Userdata.instance.ipport.port
         val text_body = "Running background....."
         val notification = OngoingNotificationBuilder().buildOngoingNotification(
