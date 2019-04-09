@@ -194,7 +194,7 @@ class TaskEditActivity : AbstractAppCompatPluginActivity() {
             )
             result = TaskBundleValues.generateBundle(applicationContext, values)
         }
-        if (TaskerPlugin.Setting.hostSupportsOnFireVariableReplacement(this)) {
+        if (result!=null && TaskerPlugin.Setting.hostSupportsOnFireVariableReplacement(this)) {
             TaskerPlugin.Setting
                 .setVariableReplaceKeys(
                     result, arrayOf(
