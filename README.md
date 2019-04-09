@@ -21,7 +21,7 @@ Tasker plugin for triggering or transfering between devices... AES encrypted mes
 * All the message transmission is AES-128 CBC encryption, so lets assume the message is unhackable.
 * What we worry now is triggering the task by the same encypted message where the bad guy sent to the device again ang again (if he listened our message)
 * So for every communication there is two step.
-* The first one, we will transferred unique uuid string (salt) between the two device. No one can decrypt this(as we assumed earlier☺).
+* The first one, we will transferred unique uuid string (salt) between the two device. No one can decrypt this(as we assumed earlier😊).
   These salt will store in its respective devices for some time(around 10minute. after that the salts will automatically deleted)
 * Then after the first communication we will send the real message where we added the salt given by the other device in the first communication.
   As we added the unique salt to the message, the encrypted mesage will be unique. and the message will be valid till the salt is valid 
