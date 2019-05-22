@@ -34,7 +34,13 @@ class Userdata private constructor() {
     var Trig_findphone: String = NULL_WORD
     var isReadedfromSpref = false//to check from background service in tasker
     var isToast = true
-    var ipport: IpPort = IpPort(getDeviceIpAddress(), 6868)
+    var ipport: IpPort = IpPort(FirstimeGetDeviceIpAddress(), 6868)
+    set(value) {
+        if(value.ip.equals(LOCAL_IP)){
+            return
+        }
+        field=value
+    }
     var global_password: String = ""
         set(value) {
             field = value
@@ -60,8 +66,11 @@ class Userdata private constructor() {
     fun save(applicationContext: Context?, id: Int, value: Any) {
         when (id) {
 
+            R.id.edit_ip_adress -> {
+                ipport = IpPort(value as String, this.ipport.port)
+            }
             R.id.edit_port_value -> {
-                ipport = IpPort(getDeviceIpAddress(), value as Int)
+                ipport = IpPort(this.ipport.ip, value as Int)
             }
             R.id.edit_password -> global_password = value as String
             R.id.switch_enable_custom_activity -> iscustomactivity = value as Boolean
@@ -109,14 +118,11 @@ class Userdata private constructor() {
         /**Lets read the Ip adress
          * of the device
          */
-        data.grabLocalIp()
         data.isReadedfromSpref = true
         Userdata.instance = data
     }
 
-    private fun grabLocalIp() {
-        ipport = IpPort(getDeviceIpAddress(), ipport.port)
-    }
+
 }
 
 
@@ -189,7 +195,7 @@ class PendingTaskerTask {
 class MessageTimeObject(val message: MyMessage, val milli: Long)
 
 
-fun getDeviceIpAddress(): String {
+fun FirstimeGetDeviceIpAddress(): String {
     try {
         val enumeration = NetworkInterface
                 .getNetworkInterfaces()

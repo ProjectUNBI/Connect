@@ -11,7 +11,7 @@ dependencies {
     implementation group:'com.android.support', name:'support-v4', version:"28.0.0"
     implementation 'com.google.android:android-test:4.1.1.4'
     implementation group:'net.jcip', name:'jcip-annotations', version:"1.0"
-    implementation group:'com.android.support', name:'support-annotations', version:"]25.0.0,26["
+//    implementation group:'com.android.support', name:'support-annotations', version:"]25.0.0,26["
 //    androidTestImplementation group:'com.android.support.test.espresso', name:'espresso-core', version:"3.0.2"
 //    androidTestImplementation group:'com.android.support.test.espresso', name:'espresso-intents', version:"3.0.2"
 //    testImplementation 'com.android.support.test:runner:1.0.2'

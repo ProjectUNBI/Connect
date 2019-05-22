@@ -12,6 +12,7 @@ import com.unbi.connect.Userdata
 import com.unbi.connect.bind
 import com.unbi.connect.fragment.FragmentCustomActivity
 import com.unbi.connect.fragment.FragmentLogView
+import java.util.regex.Pattern
 
 
 class MainActivity : BaseMainActivity() {
@@ -23,6 +24,9 @@ class MainActivity : BaseMainActivity() {
 
         when (id) {
             R.id.edit_port_value -> {
+                but_save.isEnabled = true
+            }
+            R.id.edit_ip_adress -> {
                 but_save.isEnabled = true
             }
             R.id.edit_password -> {
@@ -56,6 +60,16 @@ class MainActivity : BaseMainActivity() {
                     Userdata.instance.save(applicationContext, R.id.edit_port_value, port)
                     mService?.restartServer()
                 }
+
+                if (!isValidip(edit_ip.text.toString())) {
+                    edit_ip.setError("Invalid ip address")
+                    return@OnClickListener
+                }
+
+                if(!Userdata.instance.ipport.ip.equals(edit_ip.text.toString())){
+                    Userdata.instance.save(applicationContext, R.id.edit_ip_adress, edit_ip.text.toString())
+                    mService?.restartServer()
+                }
                 edit_password.setTransformationMethod(PasswordTransformationMethod())
                 but_save.isEnabled = false
                 Userdata.instance.isReadedfromSpref=false
@@ -65,7 +79,14 @@ class MainActivity : BaseMainActivity() {
         }
     }
 
-    private val tv_ip: TextView by bind(R.id.tv_ip_adress)
+    private fun isValidip(ipstring: String): Boolean {
+        val PATTERN = Pattern.compile(
+                "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$"
+        )
+        return PATTERN.matcher(ipstring).matches()
+    }
+
+    private val edit_ip: EditText by bind(R.id.edit_ip_adress)
     private val edit_port: EditText by bind(R.id.edit_port_value)
     private val edit_password: EditText by bind(R.id.edit_password)
     private val switch_custom_activity: Switch by bind(R.id.switch_enable_custom_activity)
@@ -84,10 +105,13 @@ class MainActivity : BaseMainActivity() {
         switch_toast.setOnCheckedChangeListener(checklistener)
         switch_custom_activity.isChecked = Userdata.instance.iscustomactivity
         switch_toast.isChecked = Userdata.instance.isToast
-        tv_ip.setOnClickListener(clicklistener)
-        tv_ip.setText(Userdata.instance.ipport.ip)
-        edit_port.setOnFocusChangeListener(focusschangelistener)
-        edit_password.setOnFocusChangeListener(focusschangelistener)
+
+
+//        tv_ip.setOnClickListener(clicklistener)
+        edit_ip.setText(Userdata.instance.ipport.ip)
+        edit_ip.onFocusChangeListener = focusschangelistener
+        edit_port.onFocusChangeListener = focusschangelistener
+        edit_password.onFocusChangeListener = focusschangelistener
         tv_custom_activity.setOnClickListener(clicklistener)
         tv_log.setOnClickListener(clicklistener)
 //        tv_about.setOnClickListener(clicklistener)

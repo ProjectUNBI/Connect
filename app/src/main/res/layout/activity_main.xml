@@ -17,7 +17,7 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/smalest_margin_from_wall"
@@ -33,15 +33,16 @@
                     android:textSize="@dimen/big_bold"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_ip_adress"
-                    android:layout_width="match_parent"
+                <EditText
+                    android:id="@+id/edit_ip_adress"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_gravity="right"
                     android:layout_marginEnd="@dimen/margin_end"
                     android:gravity="center|right"
                     android:hint="@string/text_ip_adres"
                     android:textSize="@dimen/big_norbig_normal" />
-            </LinearLayout>
+            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
