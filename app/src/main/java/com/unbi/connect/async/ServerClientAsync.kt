@@ -69,7 +69,10 @@ class ClientAsync(private val ipPort: IpPort, toaster: Toaster?, logger: Logger?
                 //write a message to the server
                 out.println(stringTosend)
                 //read back a message from the server.
-                val str = input.readLine()
+                /***
+                 * Dont ever read from the server back Because as the server dont know the length
+                 */
+                //val str = input.readLine()
                 out.flush()
             } catch (e: Exception) {
                 mypublish(LOGTYPE,LOG_TYPE_ERROR, e.message.toString())
