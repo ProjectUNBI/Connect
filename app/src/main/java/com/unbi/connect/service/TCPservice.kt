@@ -3,6 +3,7 @@ package com.unbi.connect.service
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Binder
 import android.os.IBinder
 import android.widget.Toast
@@ -114,7 +115,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
                 while (true) {
                     mySocket = Server.accept()
                     val serverAsyncTask = ServerAsync(this, this, this)
-                    serverAsyncTask.execute(mySocket)
+                    serverAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mySocket)
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -225,7 +226,7 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
             COMMUTYPE_WIFI -> {
                 //todo send via wifi
                 val client = ClientAsync(address.adress as IpPort, this, this)
-                client.execute(string)
+                client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,string)
             }
         }
     }
