@@ -124,7 +124,7 @@ class DataList:
                     newlist.append(timObj)
             self.arrayOftbObject = newlist
         finally:
-            self.lock.release()
+            self.lock.release()            
 
     def popexpiredObjectAsync(self):#for poping from alreadily locked thread
         self.lasttimepoped = getCurrentmilli()
@@ -182,7 +182,7 @@ class DataList:
             return isvalid
         finally:
             self.lock.release()
-
+            
 
 
 eg.globals.SALT_DATA_LIST = DataList()
@@ -409,28 +409,25 @@ class ThreadedServer(object):
 
     def listenToClient(self, client, address):
         size = 1024
-        rcv = True
         response = ""
         if (self.connect == False):
             client.close()
             print('Plugin is closed')
             return
-        while (rcv):
+        while (True):
             try:
                 data = client.recv(size)
                 if data:
                     # Set the response to echo back the recieved data
                     response = response + data
                     # client.send(response)#Here we send response back
-                    # self.sock.shutdown(socket.SHUT_RDWR)
-                    client.close()
-                    # self.sock.server_close()
                 else:
                     client.close()
-                    rcv = False
+                    break
             except:
                 client.close()
-                rcv = False
+                break
+        client.close()
         ##here we got the message
         #print(response)
         msgtasktype = mesageProcess(response, self.pword, self.port)
@@ -484,7 +481,7 @@ class MyMessage(
         val uuidToCheck: MsgUUID?,
         val taskName: String? = null,
         val resultCode: Int = RESULT_UNKNOWN
-)
+) 
 
 '''
 
@@ -612,6 +609,4 @@ class SendMessage(eg.ActionBase):
         #init.send(wheretosend, password)
         thread = SendingThread(init,wheretosend, password)
         thread.start()
-
-
 
