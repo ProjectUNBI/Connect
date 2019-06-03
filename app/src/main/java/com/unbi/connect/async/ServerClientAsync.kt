@@ -22,10 +22,8 @@ class ServerAsync(toaster: Toaster?, logger: Logger?,trig:TriggerTask) :  Assync
 //            )
             //out.println("Welcome to \""+Server_Name+"\" Server");//it is the reply
             // actually i dont want to do any response to the cleint.. we will send directly to the  cleint server ipPort
-            val br = BufferedReader(
-                InputStreamReader(stream)
-            )
-            val str=br.readLine()// read alll the line
+
+            val str=stream.bufferedReader().use(BufferedReader::readText)//br.readLine()// read alll the line
             socket.close();
             issocketclosed=true
             val communicator=ApplicationInstance.instance.communicator

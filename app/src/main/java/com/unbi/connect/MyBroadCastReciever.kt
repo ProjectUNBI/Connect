@@ -25,6 +25,8 @@ class MyBroadCastReciever : BroadcastReceiver() {
         when (actionId) {
             BOOTCOMPLETE -> pusintent = Intent(context, TCPservice::class.java)
             WifiManager.NETWORK_STATE_CHANGED_ACTION -> {
+                //you need to read User preference after the boot
+                Userdata.instance.readfromSpref(context)
 //                val info: NetworkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)
 //                if (context == null) {
 //                    return

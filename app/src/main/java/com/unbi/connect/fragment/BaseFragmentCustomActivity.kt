@@ -63,6 +63,7 @@ abstract class BaseFragmentCustomActivity : BaseFragMent(), DialogInterface.OnCl
         }
         dialogCreator?.PositiveButton?.isEnabled = false
 
+
     }
 
     var last_click = 0;//it is to determine which Cardview is clicked
@@ -113,6 +114,8 @@ abstract class BaseFragmentCustomActivity : BaseFragMent(), DialogInterface.OnCl
         dialogCreator?.PositiveButton?.isEnabled = true
 
     }
+
+
 
     abstract fun refreshview()//refresh the view
 }

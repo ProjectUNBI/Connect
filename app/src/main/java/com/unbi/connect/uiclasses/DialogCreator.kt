@@ -4,10 +4,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.widget.Button
 import android.support.v7.app.AlertDialog
+import com.unbi.connect.ApplicationInstance
 import com.unbi.connect.R
 
 
-class DialogCreator(context: Context, val title_text: String, val dialog_text: String, vararg buttonparamarg: AlerDialogButonParam) {
+class DialogCreator(context: Context, val title_text: String, val dialog_text: String, vararg buttonparamarg: AlerDialogButonParam) :
+    DialogInterface.OnDismissListener {
+    override fun onDismiss(dialog: DialogInterface?) {
+        ApplicationInstance.instance.isCapturingMode=false
+    }
+
     var PositiveButton: Button? = null
     var NeutralButton: Button? = null
     var NeagtiveButton: Button? = null
@@ -21,6 +27,7 @@ class DialogCreator(context: Context, val title_text: String, val dialog_text: S
         for (butonparam in buttonparamarg) {
             alertDialog.setButton(butonparam.identifier, butonparam.text, butonparam.clicklistener)
         }
+        alertDialog.setOnDismissListener(this)
         alertDialog.show()
         PositiveButton=alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         NeutralButton=alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
