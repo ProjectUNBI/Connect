@@ -37,9 +37,9 @@ There are two type of connection:
 * Android and Windows(via Tasker and Eventghost)
 
 # First things First
-* it will not work in dynamic type of ip
+* it will not work in dynamic type of Ip.
 * You need to set up the devices into static ips.
-  It can be done from your router or from your devicec. For setting up static ip from router,go to the router setting and assign each device's MAC address with specific static ip.If you want to assign from your devices, for example from your android phone, Go to the setting>wifi>connect to the wifi>long press the wifi and click on "Modify network">go to advance options>Changes Ip setting from DHCP to "Static" and fill up it.
+  It can be done from your router or from your devicec. <br/>For setting up static ip from router,go to the router setting and assign each device's MAC address with specific static ip.<br/>If you want to assign from your devices, for example from your android phone, Go to the setting>wifi>connect to the wifi>long press the wifi and click on "Modify network">go to advance options>Changes Ip setting from DHCP to "Static" and fill up it.
 
 # Android to Android (via Tasker)
 * Download the app
@@ -51,7 +51,7 @@ There are two type of connection:
 
 Ok..You set up the "Connect" app.<br/>
 Now lets configure the Tasker app:<br/>
-Lets assume two device :<br/>1) "Device X" as message sender <br/>2)"Device Y" as message receiver
+Lets assume two device :<br/>1) "Device X" as message sender <br/>2) "Device Y" as message receiver
 
 In Device X:
 * go to Tasker>Create new Task>add Task>Plugin>"Connect"
@@ -64,7 +64,7 @@ In Devicec Y:
 * save it after selecting some task for that profile
 
 
-Now from the device X, Perform the task... You will see the another task triggered in the other phone. Please note that you have to connect the decvices in the same Local area network (LAN) or WIFI and You also have to assign Static Ip for each device and also the Password must be same.
+Now from the Device X, Perform the task... You will see the another task triggered in Devicec Y. Please note that you have to connect the decvices in the same Local area network (LAN) or WIFI and You also have to assign Static Ip for each device and also the Password must be same.
 
 
 # For Android and Windows's event ghost:
