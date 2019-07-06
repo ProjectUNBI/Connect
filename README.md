@@ -32,8 +32,8 @@ Tasker plugin for triggering or transfering message between devices... AES encry
 * The reciever will decrypt the message and will check if the salt is valid or not. and the the task will be performed if the salt is valid
 
 # How to set up
-There are two type of connectio:
-* Android and Android(via Tasker app)
+There are two type of connection:
+* Android and Android(via Tasker app) Video: https://youtu.be/HW1xRH-yqVg
 * Android and Windows(via Tasker and Eventghost)
 
 # First things First
@@ -46,16 +46,16 @@ There are two type of connectio:
 * Set up static ip for each device
 * Connect the devices in same Wifi/LAN
 * Open the "Connect" app
-* fill the IP field with respective static IP of the devices
+* Fill the IP field with respective static IP of the devices
 * Dont forget to set the same encryption passord for all devices
 
-Ok..You set up the "Connect" app
-Now lets configure the Tasker app:
-lets assume two device "Device X" as message sender and "Device Y" as message receiver
+Ok..You set up the "Connect" app.<br/>
+Now lets configure the Tasker app:<br/>
+Lets assume two device :<br/>1) "Device X" as message sender <br/>2)"Device Y" as message receiver
 
 In Device X:
 * go to Tasker>Create new Task>add Task>Plugin>"Connect"
-* while editting=> select the "This is a message". Write the receiver IP addres and port... fill up the TAG and MESSAGE with some text. (Note you should remember this as this will be required in receiver).Now, save the setting
+* while editting=> select the "This is a message". Write the receiver IP addres and port... fill up the TAG and MESSAGE with some text. (Note you should remember this as this will be required in receiver).Now, save it.
 
 
 In Devicec Y:
@@ -71,7 +71,7 @@ Now from the device X, Perform the task... You will see the another task trigger
 
 * https://github.com/ProjectUNBI/Connect/tree/master/EventGhostPlugin/Connect download the file and save in a folder named "Connect"
 Move this folder to the eventghost Plugin's location. e.i. "C:\Program Files (x86)\EventGhost\plugins". Now restart the EventGhost.
-Now You will be able to see the Connect plugin in eventghost,in "Autostart>StartPlugin" as "Connect ghostly". Set up the port and Password (same with other devices).
+Now You will be able to see the Connect plugin in eventghost,in "Autostart>StartPlugin" as "Connect ghostly". Set up the Port and Password (same with other devices).
 
 Now You can see events occur in Eventghost's Log. when you send a message with Tag from tasker app to this device's ip address.
 
@@ -106,7 +106,7 @@ sendCommand(receiverIP,receiverPort,password,messageType,isIntent,Tag,Taskname)
 
 
 # For Using the Custom task:
-* Our app support three custome task 1)Copy text to the clipboard(when a message receive containg text)  2) Sending clipboard content back to another devicec 3)Find de device
+* Our app support three custome standalone tasks: <br/>1)Copy text to the clipboard(when a message receive containg text)  <br/>2) Sending clipboard content back to another devicec <br/>3)Find de device
 
 * Just turn on the "Enable custom activity" in the App's main page
 * Go to App's "Costom Activity">"Find phone" and select it..you will see "waiting message"
