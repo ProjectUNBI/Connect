@@ -3,11 +3,16 @@ package com.unbi.connect.service
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.CATEGORY_DEFAULT
+import android.content.IntentFilter
 import android.os.AsyncTask
 import android.os.Binder
 import android.os.IBinder
+import android.support.v4.content.LocalBroadcastManager
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import com.twofortyfouram.locale.api.Intent.ACTION_FIRE_SETTING
+import com.twofortyfouram.locale.api.Intent.ACTION_QUERY_CONDITION
 import com.unbi.connect.*
 import com.unbi.connect.activity.MainActivity
 import com.unbi.connect.async.ServerAsync
@@ -22,6 +27,8 @@ import com.unbi.connect.activity.ServiceToActivity
 import com.unbi.connect.async.AssyncViewUpdater
 import com.unbi.connect.async.ClientAsync
 import com.unbi.connect.messaging.*
+import com.unbi.connect.plugin.receiver.FireReceiver
+import com.unbi.connect.plugin.receiver.QueryReceiver
 
 
 class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
@@ -49,10 +56,26 @@ class TCPservice : BaseService(), TriggerTask, Logger, SendDataString, Toaster {
     }
 
 
+
     override fun onBind(intent: Intent?): IBinder? {
         return binder
     }
 
+    override fun onCreate() {
+        super.onCreate()
+
+        //Registering the Broadcast receiver...
+        val intentFilter1= IntentFilter(ACTION_QUERY_CONDITION)
+        intentFilter1.addCategory(CATEGORY_DEFAULT)
+        val queryReceiver=QueryReceiver()
+        registerReceiver(queryReceiver,intentFilter1)
+
+        val intentFilter2= IntentFilter(ACTION_FIRE_SETTING)
+        intentFilter2.addCategory(CATEGORY_DEFAULT)
+        val fireReceiver=FireReceiver()
+        registerReceiver(fireReceiver,intentFilter2)
+
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (ApplicationInstance.instance.communicator == null) {

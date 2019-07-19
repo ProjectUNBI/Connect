@@ -161,6 +161,8 @@ Be sure to test that the app works without a touchscreen.
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
+        <service android:name=".MyService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

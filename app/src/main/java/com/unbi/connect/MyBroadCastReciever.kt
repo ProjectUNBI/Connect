@@ -11,6 +11,10 @@ import com.unbi.connect.service.TCPservice
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import com.unbi.connect.messaging.IpPort
+import android.support.annotation.NonNull
+import android.support.v4.app.JobIntentService
+
+
 
 
 class MyBroadCastReciever : BroadcastReceiver() {
@@ -21,9 +25,14 @@ class MyBroadCastReciever : BroadcastReceiver() {
         }
 
         val actionId = intent?.action;
-        var pusintent: Intent? = null
+//        var pusintent: Intent? = null
         when (actionId) {
-            BOOTCOMPLETE -> pusintent = Intent(context, TCPservice::class.java)
+            BOOTCOMPLETE -> {
+//                pusintent = Intent(context, TCPservice::class.java)
+                if (context != null) {
+                    MyService().enqueueWork(context,intent)
+                }
+            }
             WifiManager.NETWORK_STATE_CHANGED_ACTION -> {
                 //you need to read User preference after the boot
                 Userdata.instance.readfromSpref(context)
@@ -51,10 +60,30 @@ class MyBroadCastReciever : BroadcastReceiver() {
 //                }
             }
         }
-        if (pusintent != null && context != null) {
-            context.startService(pusintent)//starting the service when boot start
-        }
+//        if (pusintent != null && context != null) {
+//            context.startService(pusintent)//starting the service when boot start
+//        }
 
 
     }
+}
+
+
+class MyService : JobIntentService() {
+    lateinit var mContext:Context
+    override fun onHandleWork(intent: Intent) {
+        val pusintent = Intent(mContext, TCPservice::class.java)
+        if (pusintent != null && mContext != null) {
+            mContext.startService(pusintent)//starting the service when boot start
+        }
+    }
+    fun enqueueWork(context: Context, work: Intent) {
+        mContext=context
+        enqueueWork(context, MyService::class.java, JOB_ID, work)
+    }
+    companion object {
+
+        val JOB_ID = 0x01
+    }
+
 }
