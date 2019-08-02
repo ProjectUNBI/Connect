@@ -1,4 +1,4 @@
-# NOTE: It doesnot work in android "O" and "P" properly... i will fixed them when i got free time... maybe 1 year or 2 year
+# NOTE: It doesnot work in android "O" and "P" properly... i will fixed them when i got free time... maybe 1 year or 2 year later
 
 # Connect
 Tasker plugin for triggering or transfering message between devices... AES encrypted message and one time trigger message
