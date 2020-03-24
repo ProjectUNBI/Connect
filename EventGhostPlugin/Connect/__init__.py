@@ -19,6 +19,7 @@ import wx.lib.scrolledpanel as scrolled
 import time
 import uuid
 import json
+import re
 
 NOTIFICATION_CHANNEL_ID = "com.unbi.connect"
 BOOTCOMPLETE = "android.intent.action.BOOT_COMPLETED"
@@ -71,7 +72,6 @@ class AESCipher(object):
         enc = base64.b64decode(enc)
         iv = enc[:AES.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        # todo add password error
         return self._unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
 
     def _pad(self, s):
@@ -79,8 +79,7 @@ class AESCipher(object):
 
     @staticmethod
     def _unpad(s):
-        return s[0:-ord(s[-1])]
-
+        return s[:-ord(s[len(s)-1:])]
 
 # End of AES Cypher class
 
@@ -101,8 +100,8 @@ class DataList:
                     if (other.mymessage.uuidToCheck.uuid == pdngMsg.mymessage.uuidToCheck.uuid):
                         exist = True
 
-            if (type(other) is Salt):
-                for salt in self.arrayOftbObject:
+            if (type(other) is SaltObject):
+                for saltobject in self.arrayOftbObject:
                     if (other.saltString == salt.saltString):
                         exist = True
 
@@ -193,24 +192,30 @@ eg.globals.PORT = '6868'
 def mesageProcess(string, pword, mport):  # string which arreive from the message
     cipher = AESCipher(pword)
     decrypted = cipher.decrypt(string)
+    decrypted=re.sub(r"(^.*\}).*?$", r'\1', decrypted)
     if (decrypted is None):
         print("Decrypted result is None\nMight be errror in password")
         return None
     # decrypted='{"isIntent":false,"resultCode":0,"saltToAdd":{"saltString":"salt_838e91e3-dcc1-482e-a34e-74e9a8330f11","milli":1553697413295},"sender":{"ip":"192.168.43.201","port":8668},"mtype":0}'
     # decrypted='{"isIntent":false}'
-    data = json.loads(decrypted)
-    #print(decrypted)
+    print(decrypted)
+    #data = json.loads(decrypted)
+    try:
+        data = json.loads(decrypted)
+    except:
+        print("Json Parse error...")
+        return
     isIntent = parsemeJson(data, 'isIntent')
     saltToAddJson = parsemeJson(data, 'saltToAdd')
     if saltToAddJson is None:
         saltToAdd = None
     else:
-        saltToAdd = Salt(parsemeJson(saltToAddJson, 'milli'), parsemeJson(saltToAddJson, 'saltString'))
+        saltToAdd = SaltID(parsemeJson(saltToAddJson, 'saltString'))
     saltToCheckJson = parsemeJson(data, 'saltToCheck')
     if saltToCheckJson is None:
         saltToCheck = None
     else:
-        saltToCheck = Salt(parsemeJson(saltToCheckJson, 'milli'), parsemeJson(saltToCheckJson, 'saltString'))
+        saltToCheck = SaltID(parsemeJson(saltToCheckJson, 'saltString'))
     senderjson = parsemeJson(data, 'sender')
     if senderjson is None:
         sender = None
@@ -233,10 +238,13 @@ def mesageProcess(string, pword, mport):  # string which arreive from the messag
         print("Meassge parsing got null value")
         return None
     ipport = IpPort(socket.gethostbyname(socket.gethostname()), mport)
-    if myMessage.mtype == TYPE_INIT and myMessage.saltToCheck is None:
+    if myMessage.saltToCheck is None:
         print("Sender salt is null,sending a valid salt")
         salttoadd = myMessage.saltToAdd
-        salttocheck = Salt(getCurrentmilli()).generate(eg.globals.SALT_DATA_LIST)
+        salttocheck = SaltID().generate()
+        saltobject=SaltObject(getCurrentmilli(),salttocheck.saltString)
+        saltobject.addToPendings(eg.globals.SALT_DATA_LIST)
+        
         newmsg = MyMessage(salttocheck, salttoadd, ipport, None, None, None, False, TYPE_INIT, None
                            , myMessage.uuidToadd)
         return MessageTaskType(TO_REDIRECT, newmsg, myMessage.sender)
@@ -249,7 +257,7 @@ def mesageProcess(string, pword, mport):  # string which arreive from the messag
         pending_mesage = eg.globals.PENDING_MSG_DATALIST.getAndPopTimeBaseObject(myMessage.uuidToCheck, DATALIST_MSG)
         print('Total pending message: ' + str(len(eg.globals.PENDING_MSG_DATALIST.arrayOftbObject)))
         if pending_mesage is not None:
-            pending_mesage.mymessage.saltToCheck = saltToAdd
+            pending_mesage.mymessage.saltToCheck  =  saltToAdd
             return MessageTaskType(TO_REDIRECT, pending_mesage.mymessage, myMessage.sender)
         else:
             print("No such pending message")
@@ -295,17 +303,27 @@ class MsgUUID:
     def generate(self):
         if (self.uuid == "" or self.uuid is None):
             self.uuid = UUID_PREFIX + str(uuid.uuid4())
+            return self
 
 
-class Salt:
+
+class SaltObject:
     def __init__(self, milli, saltString=""):
         self.saltString = saltString
         self.milli = milli
+    
+    def addToPendings(self, datalist):
+        datalist.popexpiredObject()
+        datalist.add(self)
+        
+        
+class SaltID:
+    def __init__(self,saltString=""):
+        self.saltString = saltString
 
-    def generate(self, datalis):
-        if (self.saltString == ""):
+    def generate(self):
+        if (self.saltString == "" or self.saltString is None):
             self.saltString = SALT_PREFIX + str(uuid.uuid4())
-        datalis.add(self)
         return self
 
 
@@ -341,11 +359,13 @@ class MyMessage:
 
     def getEncryptedMsg(self, pword):
         cypher = AESCipher(pword)
-        return cypher.encrypt(json.dumps(self, default=lambda o: o.__dict__))
+        strdump=json.dumps(self, default=lambda o: o.__dict__)
+        return cypher.encrypt(strdump)
 
     def send(self, ipport, pword):
         encrypted = self.getEncryptedMsg(pword)
         print (json.dumps(ipport.ip))
+        print (encrypted)
         try:
             if (ipport is None):
                 print("trying send.. but ip port is None")
@@ -355,6 +375,7 @@ class MyMessage:
             client.connect((ipport.ip, ipport.port))
             client.send(encrypted.encode())
             client.close()
+            print('Closed')
             if self.mtype == TYPE_INIT:
                 print('Message init...')
             else:
@@ -417,10 +438,15 @@ class ThreadedServer(object):
         while (True):
             try:
                 data = client.recv(size)
+                print("Hullo")
+                if '\r\n' in data:
+                    response = response + data
+                    client.send(" ")#Here we send response back
+                    client.close()
+                    break;
                 if data:
                     # Set the response to echo back the recieved data
                     response = response + data
-                    # client.send(response)#Here we send response back
                 else:
                     client.close()
                     break
@@ -429,7 +455,8 @@ class ThreadedServer(object):
                 break
         client.close()
         ##here we got the message
-        #print(response)
+        print("Already closed")
+        print(response)
         msgtasktype = mesageProcess(response, self.pword, self.port)
         if msgtasktype is None:
             print('Something is wrong')
@@ -602,11 +629,16 @@ class SendMessage(eg.ActionBase):
         pending = PendingMessage(message, getCurrentmilli(), wheretosend)
         pending.addToPendings(eg.globals.PENDING_MSG_DATALIST)
 
-        salttoadd = Salt(getCurrentmilli())
-        salttoadd.generate(eg.globals.SALT_DATA_LIST)
+        salttoadd = SaltID()
+        salttoadd.generate()
+        saltobject=SaltObject(getCurrentmilli(),salttoadd.saltString)
+        saltobject.addToPendings(eg.globals.SALT_DATA_LIST)
+        
         init = MyMessage(salttoadd, None, yourip, None, None, None, False, TYPE_INIT, uuidToadd, None)
         # todo do it in a async Thread
         #init.send(wheretosend, password)
         thread = SendingThread(init,wheretosend, password)
         thread.start()
+
+
 
