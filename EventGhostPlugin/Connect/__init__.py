@@ -198,7 +198,7 @@ def mesageProcess(string, pword, mport):  # string which arreive from the messag
         return None
     # decrypted='{"isIntent":false,"resultCode":0,"saltToAdd":{"saltString":"salt_838e91e3-dcc1-482e-a34e-74e9a8330f11","milli":1553697413295},"sender":{"ip":"192.168.43.201","port":8668},"mtype":0}'
     # decrypted='{"isIntent":false}'
-    print(decrypted)
+    #print(decrypted)
     #data = json.loads(decrypted)
     try:
         data = json.loads(decrypted)
@@ -263,6 +263,7 @@ def mesageProcess(string, pword, mport):  # string which arreive from the messag
             print("No such pending message")
             return None
     if myMessage.mtype == TYPE_RESPOSNE or myMessage.mtype == TYPE_MESSAGE:
+    	#print('Actionable message recived')
         return MessageTaskType(TO_TRIGGER, myMessage, myMessage.sender)
 
 
@@ -365,7 +366,7 @@ class MyMessage:
     def send(self, ipport, pword):
         encrypted = self.getEncryptedMsg(pword)
         print (json.dumps(ipport.ip))
-        print (encrypted)
+        #print (encrypted)
         try:
             if (ipport is None):
                 print("trying send.. but ip port is None")
@@ -375,7 +376,6 @@ class MyMessage:
             client.connect((ipport.ip, ipport.port))
             client.send(encrypted.encode())
             client.close()
-            print('Closed')
             if self.mtype == TYPE_INIT:
                 print('Message init...')
             else:
@@ -438,7 +438,6 @@ class ThreadedServer(object):
         while (True):
             try:
                 data = client.recv(size)
-                print("Hullo")
                 if '\r\n' in data:
                     response = response + data
                     client.send(" ")#Here we send response back
@@ -455,8 +454,8 @@ class ThreadedServer(object):
                 break
         client.close()
         ##here we got the message
-        print("Already closed")
-        print(response)
+        #print("Already closed")
+        #print(response)
         msgtasktype = mesageProcess(response, self.pword, self.port)
         if msgtasktype is None:
             print('Something is wrong')
@@ -639,6 +638,4 @@ class SendMessage(eg.ActionBase):
         #init.send(wheretosend, password)
         thread = SendingThread(init,wheretosend, password)
         thread.start()
-
-
 
