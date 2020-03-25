@@ -3,6 +3,9 @@
 # Connect
 Tasker plugin for triggering or transfering message between devices... AES encrypted message and one time trigger message
 
+# For ESP8266
+
+* https://github.com/DuinoLib/Connect_ESP8266
 
 # Features
 * Tasker app integrations
