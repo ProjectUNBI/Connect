@@ -639,3 +639,5 @@ class SendMessage(eg.ActionBase):
         thread = SendingThread(init,wheretosend, password)
         thread.start()
 
+
+
