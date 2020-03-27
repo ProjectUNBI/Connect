@@ -192,7 +192,11 @@ eg.globals.PORT = '6868'
 
 def mesageProcess(string, pword, mport):  # string which arreive from the message
     cipher = AESCipher(pword)
-    decrypted = cipher.decrypt(string)
+    try:
+        decrypted = cipher.decrypt(string)
+    except:
+        print("Error in decryption")
+        return
     decrypted=re.sub(r"(^.*\}).*?$", r'\1', decrypted)
     if (decrypted is None):
         print("Decrypted result is None\nMight be errror in password")
