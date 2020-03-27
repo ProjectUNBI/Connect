@@ -3,6 +3,7 @@ import eg
 eg.RegisterPlugin(
     name="Connect Ghostly",
     author="Glu",
+    guid = "{B9EF1C39-4217-4262-BD0F-6AB6C8E3E78D}",
     version="0.1.1",
     kind="other",
     description="This will communicate with other device in TCP"
@@ -102,7 +103,7 @@ class DataList:
 
             if (type(other) is SaltObject):
                 for saltobject in self.arrayOftbObject:
-                    if (other.saltString == salt.saltString):
+                    if (other.saltString == saltobject.saltString):
                         exist = True
 
             if (exist == False):
@@ -447,6 +448,7 @@ class ThreadedServer(object):
                     # Set the response to echo back the recieved data
                     response = response + data
                 else:
+                    response = response + data
                     client.close()
                     break
             except:
@@ -538,7 +540,7 @@ class Payload:
         return self.__str__()
 
 
-class MyPlugin(eg.PluginBase):
+class ConnectGhostly(eg.PluginBase):
     def __init__(self):
         self.AddAction(SendMessage)
 
